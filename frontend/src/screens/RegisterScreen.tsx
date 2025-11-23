@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState } from 'react';
 import {
   View,
   Text,
@@ -7,10 +7,11 @@ import {
   KeyboardAvoidingView,
   Platform,
   TextInput,
-} from "react-native";
-import PhoneInput from "react-native-phone-number-input";
-import { useForm, Controller } from "react-hook-form";
-import Checkbox from "expo-checkbox";
+} from 'react-native';
+import PhoneInput from 'react-native-phone-number-input';
+import { useForm, Controller } from 'react-hook-form';
+import Checkbox from 'expo-checkbox';
+import { useNavigation } from '@react-navigation/native';
 
 interface RegisterForm {
   phone: string;
@@ -20,46 +21,40 @@ interface RegisterForm {
 }
 
 const RegisterScreen = () => {
+  const navigation: any = useNavigation();
   const phoneRef = useRef<PhoneInput>(null);
   const [isPhoneValid, setIsPhoneValid] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
 
-  const {
-    control,
-    handleSubmit,
-    watch,
-    setValue,
-  } = useForm<RegisterForm>({
+  const { control, handleSubmit, watch, setValue } = useForm<RegisterForm>({
     defaultValues: {
-      phone: "",
-      password: "",
-      confirmPassword: "",
+      phone: '',
+      password: '',
+      confirmPassword: '',
       remember: false,
     },
   });
 
-  const phone = watch("phone");
-  const password = watch("password");
-  const confirmPassword = watch("confirmPassword");
+  const phone = watch('phone');
+  const password = watch('password');
+  const confirmPassword = watch('confirmPassword');
 
   const isPasswordValid = password.length >= 6;
-  const isConfirmValid =
-    confirmPassword === password && confirmPassword.length >= 6;
+  const isConfirmValid = confirmPassword.length >= 6 && password === confirmPassword;
 
-  const isButtonDisabled =
-    !isPhoneValid || !isPasswordValid || !isConfirmValid;
+  const isButtonDisabled = !isPhoneValid || !isPasswordValid || !isConfirmValid;
 
   const onSubmit = (data: RegisterForm) => {
-    console.log("REGISTER DATA:", data);
+    console.log('REGISTER DATA:', data);
+    navigation.navigate('Profile');
   };
 
   return (
     <KeyboardAvoidingView
       style={styles.container}
-      behavior={Platform.OS === "ios" ? "padding" : undefined}
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
-      
       <View style={styles.header}>
         <View style={styles.headerRow}>
           <TouchableOpacity style={styles.loginButton}>
@@ -75,7 +70,6 @@ const RegisterScreen = () => {
 
       <View style={styles.headerSpacer} />
 
-      
       <Controller
         control={control}
         name="phone"
@@ -86,7 +80,7 @@ const RegisterScreen = () => {
             defaultCode="GB"
             layout="first"
             value={value}
-            textInputProps={{ keyboardAppearance: "dark" }}
+            textInputProps={{ keyboardAppearance: 'dark' }}
             onChangeFormattedText={(text) => {
               onChange(text);
               setIsPhoneValid(phoneRef.current?.isValidNumber(text) || false);
@@ -97,52 +91,39 @@ const RegisterScreen = () => {
         )}
       />
 
-      
       <View style={styles.inputWrapper}>
         <TextInput
           style={styles.input}
           placeholder="Password"
           placeholderTextColor="#888"
           secureTextEntry={!showPassword}
-          onChangeText={(val) => setValue("password", val)}
+          onChangeText={(val) => setValue('password', val)}
         />
-        <TouchableOpacity
-          style={styles.eyeButton}
-          onPress={() => setShowPassword(!showPassword)}
-        >
-          <Text style={styles.eyeIcon}>{showPassword ? "👁" : "👁‍🗨"}</Text>
+        <TouchableOpacity style={styles.eyeButton} onPress={() => setShowPassword(!showPassword)}>
+          <Text style={styles.eyeIcon}>{showPassword ? '👁' : '👁‍🗨'}</Text>
         </TouchableOpacity>
       </View>
 
-      
       <View style={styles.inputWrapper}>
         <TextInput
           style={styles.input}
           placeholder="Confirm Password"
           placeholderTextColor="#888"
           secureTextEntry={!showConfirm}
-          onChangeText={(val) => setValue("confirmPassword", val)}
+          onChangeText={(val) => setValue('confirmPassword', val)}
         />
-        <TouchableOpacity
-          style={styles.eyeButton}
-          onPress={() => setShowConfirm(!showConfirm)}
-        >
-          <Text style={styles.eyeIcon}>{showConfirm ? "👁" : "👁‍🗨"}</Text>
+        <TouchableOpacity style={styles.eyeButton} onPress={() => setShowConfirm(!showConfirm)}>
+          <Text style={styles.eyeIcon}>{showConfirm ? '👁' : '👁‍🗨'}</Text>
         </TouchableOpacity>
       </View>
 
-      
       <View style={styles.row}>
         <View style={styles.checkRow}>
           <Controller
             control={control}
             name="remember"
             render={({ field: { onChange, value } }) => (
-              <Checkbox
-                value={value}
-                onValueChange={onChange}
-                color="#0095ff"
-              />
+              <Checkbox value={value} onValueChange={onChange} color="#0095ff" />
             )}
           />
           <Text style={styles.checkLabel}>Remember me</Text>
@@ -165,26 +146,26 @@ export default RegisterScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#ffffff",
-    alignItems: "center",
+    backgroundColor: '#ffffff',
+    alignItems: 'center',
   },
 
   header: {
-    backgroundColor: "#00a6ff",
-    width: "100%",
+    backgroundColor: '#00a6ff',
+    width: '100%',
     paddingTop: 70,
     paddingBottom: 60,
     paddingHorizontal: 20,
   },
 
   headerRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
 
   loginButton: {
-    backgroundColor: "#ffffff",
+    backgroundColor: '#ffffff',
     paddingVertical: 8,
     paddingHorizontal: 15,
     borderRadius: 25,
@@ -192,62 +173,62 @@ const styles = StyleSheet.create({
   },
 
   loginButtonText: {
-    color: "#00a6ff",
+    color: '#00a6ff',
     fontSize: 16,
-    fontWeight: "600",
+    fontWeight: '600',
   },
 
   headerRight: {
-    alignItems: "flex-end",
+    alignItems: 'flex-end',
   },
 
   title: {
     fontSize: 32,
-    fontWeight: "700",
-    color: "#ffffff",
+    fontWeight: '700',
+    color: '#ffffff',
   },
 
   subtitle: {
     fontSize: 18,
     marginTop: 5,
-    color: "#e8f7ff",
+    color: '#e8f7ff',
   },
 
   headerSpacer: {
-    width: "100%",
+    width: '100%',
     height: 60,
-    backgroundColor: "#F7FBFF",
+    backgroundColor: '#F7FBFF',
   },
 
   phoneContainer: {
-    width: "85%",
+    width: '85%',
     marginTop: 40,
     borderBottomWidth: 2,
-    borderColor: "#00a6ff",
+    borderColor: '#00a6ff',
     paddingBottom: 3,
   },
 
   phoneTextContainer: {
-    backgroundColor: "transparent",
+    backgroundColor: 'transparent',
   },
 
   inputWrapper: {
-    width: "85%",
+    width: '85%',
     marginTop: 25,
     borderBottomWidth: 2,
-    borderColor: "#007ACC",
-    position: "relative",
+    borderColor: '#007ACC',
+    position: 'relative',
     paddingBottom: 4,
   },
 
   input: {
     fontSize: 16,
     paddingVertical: 8,
-    color: "#000",
+    color: '#000',
   },
 
   eyeButton: {
-    position: "absolute",
+    position: 'absolute',
     right: 5,
     top: 8,
   },
@@ -257,16 +238,16 @@ const styles = StyleSheet.create({
   },
 
   row: {
-    width: "85%",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    width: '85%',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     marginTop: 35,
   },
 
   checkRow: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
   },
 
   checkLabel: {
@@ -275,12 +256,12 @@ const styles = StyleSheet.create({
   },
 
   button: {
-    backgroundColor: "#00a6ff",
+    backgroundColor: '#00a6ff',
     width: 60,
     height: 60,
     borderRadius: 35,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 
   disabled: {
@@ -289,6 +270,6 @@ const styles = StyleSheet.create({
 
   buttonIcon: {
     fontSize: 30,
-    color: "white",
+    color: 'white',
   },
 });
