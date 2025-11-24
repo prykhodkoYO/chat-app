@@ -7,12 +7,36 @@ import {
   TextInput,
   KeyboardAvoidingView,
   Platform,
+  Alert,
 } from 'react-native';
+import { useRoute, useNavigation } from '@react-navigation/native';
+import { registerUser } from '../api/auth';
 
 const ProfileScreen = () => {
+  const navigation = useNavigation();
+  const route = useRoute();
   const [name, setName] = useState('');
 
+  const { phone, password } = route.params as {
+    phone: string;
+    password: string;
+  };
+
   const isNextDisabled = name.trim().length === 0;
+
+  const handleRegister = async () => {
+    try {
+      const res = await registerUser({
+        phone,
+        password,
+        name,
+      });
+
+      Alert.alert('Success', 'Account created!');
+    } catch (error: any) {
+      Alert.alert('Error', error.message);
+    }
+  };
 
   return (
     <KeyboardAvoidingView
@@ -64,6 +88,7 @@ const ProfileScreen = () => {
         <TouchableOpacity
           style={[styles.button, isNextDisabled && styles.disabled]}
           disabled={isNextDisabled}
+          onPress={handleRegister}
         >
           <Text style={styles.buttonIcon}>→</Text>
         </TouchableOpacity>

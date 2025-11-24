@@ -45,9 +45,11 @@ const RegisterScreen = () => {
 
   const isButtonDisabled = !isPhoneValid || !isPasswordValid || !isConfirmValid;
 
-  const onSubmit = (data: RegisterForm) => {
-    console.log('REGISTER DATA:', data);
-    navigation.navigate('Profile');
+  const onSubmit = () => {
+    navigation.navigate('Profile', {
+      phone,
+      password,
+    } as any);
   };
 
   return (
@@ -77,7 +79,7 @@ const RegisterScreen = () => {
         render={({ field: { onChange, value } }) => (
           <PhoneInput
             ref={phoneRef}
-            defaultCode="GB"
+            defaultCode="UA"
             layout="first"
             value={value}
             textInputProps={{ keyboardAppearance: 'dark' }}
