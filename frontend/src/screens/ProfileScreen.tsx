@@ -2,41 +2,23 @@ import React, { useState } from 'react';
 import {
   View,
   Text,
-  StyleSheet,
   TouchableOpacity,
   TextInput,
   KeyboardAvoidingView,
   Platform,
   Alert,
+  Image,
 } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import { registerUser } from '../api/auth';
+import { icons } from '../constants/icons';
+import { styles } from './ProfileScreen.styles';
 
 const ProfileScreen = () => {
   const navigation = useNavigation();
-  const route = useRoute();
   const [name, setName] = useState('');
 
-  const { phone, password } = route.params as {
-    phone: string;
-    password: string;
-  };
-
-  const isNextDisabled = name.trim().length === 0;
-
-  const handleRegister = async () => {
-    try {
-      const res = await registerUser({
-        phone,
-        password,
-        name,
-      });
-
-      Alert.alert('Success', 'Account created!');
-    } catch (error: any) {
-      Alert.alert('Error', error.message);
-    }
-  };
+  const isNextDisabled = !name.trim();
 
   return (
     <KeyboardAvoidingView
@@ -56,11 +38,11 @@ const ProfileScreen = () => {
 
         <View style={styles.avatarWrapper}>
           <View style={styles.avatarCircle}>
-            <Text style={styles.avatarIcon}>👤</Text>
+            <Image source={icons.user} style={styles.avatarIcon} />
           </View>
 
           <View style={styles.editIconWrapper}>
-            <Text style={styles.editIcon}>✏️</Text>
+            <Image source={icons.pencil} style={styles.editIcon} />
           </View>
         </View>
       </View>
@@ -68,7 +50,7 @@ const ProfileScreen = () => {
       <View style={styles.headerSpacer} />
 
       <View style={styles.inputRow}>
-        <Text style={styles.inputLeftIcon}>👤</Text>
+        <Image source={icons.user} style={styles.inputLeftIcon} />
 
         <TextInput
           placeholder="Your Name"
@@ -88,7 +70,6 @@ const ProfileScreen = () => {
         <TouchableOpacity
           style={[styles.button, isNextDisabled && styles.disabled]}
           disabled={isNextDisabled}
-          onPress={handleRegister}
         >
           <Text style={styles.buttonIcon}>→</Text>
         </TouchableOpacity>
@@ -98,166 +79,3 @@ const ProfileScreen = () => {
 };
 
 export default ProfileScreen;
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#ffffff',
-    alignItems: 'center',
-  },
-
-  header: {
-    backgroundColor: '#00a6ff',
-    width: '100%',
-    paddingTop: 70,
-    paddingBottom: 40,
-    paddingHorizontal: 20,
-  },
-
-  headerRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-
-  loginButton: {
-    backgroundColor: '#ffffff',
-    paddingVertical: 8,
-    paddingHorizontal: 15,
-    borderRadius: 25,
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 4,
-    elevation: 2,
-  },
-
-  loginButtonText: {
-    color: '#00a6ff',
-    fontSize: 16,
-    fontWeight: '600',
-  },
-
-  headerRight: {
-    paddingRight: 10,
-  },
-
-  title: {
-    fontSize: 32,
-    fontWeight: '700',
-    color: '#ffffff',
-  },
-
-  avatarWrapper: {
-    marginTop: 25,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-
-  avatarCircle: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-    backgroundColor: '#34cfff',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-
-  avatarIcon: {
-    fontSize: 50,
-    color: 'white',
-  },
-
-  editIconWrapper: {
-    position: 'absolute',
-    bottom: 5,
-    right: '35%',
-    backgroundColor: '#003b78',
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-
-  editIcon: {
-    fontSize: 18,
-    color: 'white',
-  },
-
-  headerSpacer: {
-    width: '100%',
-    height: 70,
-    backgroundColor: '#F7FBFF',
-  },
-
-  inputRow: {
-    width: '85%',
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 30,
-    borderBottomWidth: 2,
-    borderColor: '#00a6ff',
-    paddingBottom: 3,
-  },
-
-  inputLeftIcon: {
-    fontSize: 20,
-    marginRight: 8,
-  },
-
-  input: {
-    flex: 1,
-    fontSize: 16,
-  },
-
-  buttonWrapper: {
-    width: '85%',
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    marginTop: 25,
-  },
-
-  button: {
-    backgroundColor: '#00a6ff',
-    width: 60,
-    height: 60,
-    borderRadius: 35,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-
-  buttonIcon: {
-    fontSize: 30,
-    color: '#ffffff',
-  },
-  rowButtons: {
-    width: '85%',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginTop: 25,
-  },
-
-  skipButton: {
-    backgroundColor: '#ffffff',
-    paddingVertical: 8,
-    paddingHorizontal: 20,
-    borderRadius: 25,
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 4,
-    elevation: 2,
-  },
-
-  skipButtonText: {
-    color: '#00a6ff',
-    fontSize: 16,
-    fontWeight: '600',
-  },
-
-  disabled: {
-    opacity: 0.4,
-  },
-});

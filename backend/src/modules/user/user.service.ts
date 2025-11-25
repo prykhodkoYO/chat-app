@@ -25,7 +25,7 @@ export class UserService {
 
     const user = this.userRepo.create({
       phone: dto.phone,
-      name: dto.name,
+      name: null,
       password: hashed,
     });
 

@@ -1,23 +1,18 @@
-const API_URL = "https://chat-app-iafk.onrender.com";
+import { api } from "./axiosInstance";
 
-export async function registerUser(data: {
+interface RegisterData {
   phone: string;
-  name: string;
   password: string;
-}) {
-  const response = await fetch(`${API_URL}/auth/register`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(data),
-  });
+}
 
-  const json = await response.json();
-
-  if (!response.ok) {
-    throw new Error(json.message || "Registration error");
+export async function registerUser(data: RegisterData) {
+  try {
+    const response = await api.post("/auth/register", data);
+    return response.data;
+  } catch (error: any) {
+    console.log("Registration error:", error.response?.data || error.message);
+    throw new Error(
+      error.response?.data?.message || "Registration failed"
+    );
   }
-
-  return json;
 }

@@ -1,17 +1,14 @@
 import React, { useRef, useState } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  KeyboardAvoidingView,
-  Platform,
-  TextInput,
-} from 'react-native';
+import { View, Text, TouchableOpacity, KeyboardAvoidingView, Platform, Alert } from 'react-native';
 import PhoneInput from 'react-native-phone-number-input';
 import { useForm, Controller } from 'react-hook-form';
 import Checkbox from 'expo-checkbox';
 import { useNavigation } from '@react-navigation/native';
+import PasswordInput from '../components/PasswordInput';
+import { styles } from './RegisterScreen.styles';
+import { registerUser } from '../api/auth';
+
+const MIN_PASSWORD_LENGTH = 6;
 
 interface RegisterForm {
   phone: string;
@@ -40,16 +37,23 @@ const RegisterScreen = () => {
   const password = watch('password');
   const confirmPassword = watch('confirmPassword');
 
-  const isPasswordValid = password.length >= 6;
-  const isConfirmValid = confirmPassword.length >= 6 && password === confirmPassword;
+  const isPasswordValid = password.length >= MIN_PASSWORD_LENGTH;
+  const isConfirmValid =
+    confirmPassword.length >= MIN_PASSWORD_LENGTH && password === confirmPassword;
 
   const isButtonDisabled = !isPhoneValid || !isPasswordValid || !isConfirmValid;
 
-  const onSubmit = () => {
-    navigation.navigate('Profile', {
-      phone,
-      password,
-    } as any);
+  const onSubmit = async () => {
+    try {
+      await registerUser({
+        phone,
+        password,
+      });
+
+      navigation.navigate('Profile');
+    } catch (error: any) {
+      Alert.alert('Registration error', error.message);
+    }
   };
 
   return (
@@ -93,31 +97,21 @@ const RegisterScreen = () => {
         )}
       />
 
-      <View style={styles.inputWrapper}>
-        <TextInput
-          style={styles.input}
-          placeholder="Password"
-          placeholderTextColor="#888"
-          secureTextEntry={!showPassword}
-          onChangeText={(val) => setValue('password', val)}
-        />
-        <TouchableOpacity style={styles.eyeButton} onPress={() => setShowPassword(!showPassword)}>
-          <Text style={styles.eyeIcon}>{showPassword ? '👁' : '👁‍🗨'}</Text>
-        </TouchableOpacity>
-      </View>
+      <PasswordInput
+        value={password}
+        onChangeText={(val) => setValue('password', val)}
+        placeholder="Password"
+        secure={!showPassword}
+        toggleSecure={() => setShowPassword(!showPassword)}
+      />
 
-      <View style={styles.inputWrapper}>
-        <TextInput
-          style={styles.input}
-          placeholder="Confirm Password"
-          placeholderTextColor="#888"
-          secureTextEntry={!showConfirm}
-          onChangeText={(val) => setValue('confirmPassword', val)}
-        />
-        <TouchableOpacity style={styles.eyeButton} onPress={() => setShowConfirm(!showConfirm)}>
-          <Text style={styles.eyeIcon}>{showConfirm ? '👁' : '👁‍🗨'}</Text>
-        </TouchableOpacity>
-      </View>
+      <PasswordInput
+        value={confirmPassword}
+        onChangeText={(val) => setValue('confirmPassword', val)}
+        placeholder="Confirm Password"
+        secure={!showConfirm}
+        toggleSecure={() => setShowConfirm(!showConfirm)}
+      />
 
       <View style={styles.row}>
         <View style={styles.checkRow}>
@@ -144,134 +138,3 @@ const RegisterScreen = () => {
 };
 
 export default RegisterScreen;
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#ffffff',
-    alignItems: 'center',
-  },
-
-  header: {
-    backgroundColor: '#00a6ff',
-    width: '100%',
-    paddingTop: 70,
-    paddingBottom: 60,
-    paddingHorizontal: 20,
-  },
-
-  headerRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-
-  loginButton: {
-    backgroundColor: '#ffffff',
-    paddingVertical: 8,
-    paddingHorizontal: 15,
-    borderRadius: 25,
-    elevation: 2,
-  },
-
-  loginButtonText: {
-    color: '#00a6ff',
-    fontSize: 16,
-    fontWeight: '600',
-  },
-
-  headerRight: {
-    alignItems: 'flex-end',
-  },
-
-  title: {
-    fontSize: 32,
-    fontWeight: '700',
-    color: '#ffffff',
-  },
-
-  subtitle: {
-    fontSize: 18,
-    marginTop: 5,
-    color: '#e8f7ff',
-  },
-
-  headerSpacer: {
-    width: '100%',
-    height: 60,
-    backgroundColor: '#F7FBFF',
-  },
-
-  phoneContainer: {
-    width: '85%',
-    marginTop: 40,
-    borderBottomWidth: 2,
-    borderColor: '#00a6ff',
-    paddingBottom: 3,
-  },
-
-  phoneTextContainer: {
-    backgroundColor: 'transparent',
-  },
-
-  inputWrapper: {
-    width: '85%',
-    marginTop: 25,
-    borderBottomWidth: 2,
-    borderColor: '#007ACC',
-    position: 'relative',
-    paddingBottom: 4,
-  },
-
-  input: {
-    fontSize: 16,
-    paddingVertical: 8,
-    color: '#000',
-  },
-
-  eyeButton: {
-    position: 'absolute',
-    right: 5,
-    top: 8,
-  },
-
-  eyeIcon: {
-    fontSize: 22,
-  },
-
-  row: {
-    width: '85%',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginTop: 35,
-  },
-
-  checkRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-
-  checkLabel: {
-    marginLeft: 10,
-    fontSize: 16,
-  },
-
-  button: {
-    backgroundColor: '#00a6ff',
-    width: 60,
-    height: 60,
-    borderRadius: 35,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-
-  disabled: {
-    opacity: 0.4,
-  },
-
-  buttonIcon: {
-    fontSize: 30,
-    color: 'white',
-  },
-});
