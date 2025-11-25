@@ -1,17 +1,18 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet } from 'react-native';
+import { COLORS, FONTS, SIZES } from '../constants/style';
 
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#ffffff',
+    backgroundColor: COLORS.white,
     alignItems: 'center',
   },
 
   header: {
-    backgroundColor: '#00a6ff',
+    backgroundColor: COLORS.primary,
     width: '100%',
-    paddingTop: 70,
-    paddingBottom: 60,
+    paddingTop: SIZES.headerPaddingTop,
+    paddingBottom: SIZES.headerPaddingBottom,
     paddingHorizontal: 20,
   },
 
@@ -22,16 +23,16 @@ export const styles = StyleSheet.create({
   },
 
   loginButton: {
-    backgroundColor: '#ffffff',
+    backgroundColor: COLORS.white,
     paddingVertical: 8,
     paddingHorizontal: 15,
-    borderRadius: 25,
+    borderRadius: SIZES.radiusM,
     elevation: 2,
   },
 
   loginButtonText: {
-    color: '#00a6ff',
-    fontSize: 16,
+    color: COLORS.primary,
+    fontSize: FONTS.text,
     fontWeight: '600',
   },
 
@@ -40,28 +41,28 @@ export const styles = StyleSheet.create({
   },
 
   title: {
-    fontSize: 32,
+    fontSize: FONTS.title,
     fontWeight: '700',
-    color: '#ffffff',
+    color: COLORS.white,
   },
 
   subtitle: {
-    fontSize: 18,
+    fontSize: FONTS.subtitle,
     marginTop: 5,
-    color: '#e8f7ff',
+    color: COLORS.grayLight,
   },
 
   headerSpacer: {
     width: '100%',
-    height: 60,
-    backgroundColor: '#F7FBFF',
+    height: SIZES.spacerHeight,
+    backgroundColor: COLORS.background,
   },
 
   phoneContainer: {
-    width: '85%',
+    width: SIZES.inputWidth,
     marginTop: 40,
     borderBottomWidth: 2,
-    borderColor: '#00a6ff',
+    borderColor: COLORS.primary,
     paddingBottom: 3,
   },
 
@@ -70,7 +71,7 @@ export const styles = StyleSheet.create({
   },
 
   row: {
-    width: '85%',
+    width: SIZES.inputWidth,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -84,14 +85,14 @@ export const styles = StyleSheet.create({
 
   checkLabel: {
     marginLeft: 10,
-    fontSize: 16,
+    fontSize: FONTS.text,
   },
 
   button: {
-    backgroundColor: '#00a6ff',
-    width: 60,
-    height: 60,
-    borderRadius: 35,
+    backgroundColor: COLORS.primary,
+    width: SIZES.buttonSize,
+    height: SIZES.buttonSize,
+    borderRadius: SIZES.radiusL,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -102,6 +103,6 @@ export const styles = StyleSheet.create({
 
   buttonIcon: {
     fontSize: 30,
-    color: 'white',
+    color: COLORS.white,
   },
 });

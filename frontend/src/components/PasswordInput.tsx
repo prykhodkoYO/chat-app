@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, TextInput, TouchableOpacity, Image, StyleSheet } from 'react-native';
-import { icons } from '../constants/icons';
+import eye from '../../assets/eye.png';
+import closedEye from '../../assets/closedEye.png';
 
 export interface PasswordInputProps {
   value: string;
@@ -29,11 +30,7 @@ export default function PasswordInput({
       />
 
       <TouchableOpacity style={styles.eyeButton} onPress={toggleSecure}>
-        <Image
-          source={secure ? icons.closedEye : icons.eye}
-          style={styles.eyeIcon}
-          resizeMode="contain"
-        />
+        <Image source={secure ? closedEye : eye} style={styles.eyeIcon} resizeMode="contain" />
       </TouchableOpacity>
     </View>
   );

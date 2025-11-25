@@ -1,141 +1,163 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet } from 'react-native';
+import { COLORS, FONTS, SIZES } from '../constants/style';
 
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#ffffff',
+    backgroundColor: COLORS.white,
     alignItems: 'center',
   },
+
   header: {
-    backgroundColor: '#00a6ff',
+    backgroundColor: COLORS.primary,
     width: '100%',
-    paddingTop: 70,
-    paddingBottom: 40,
+    paddingTop: SIZES.headerPaddingTop,
+    paddingBottom: SIZES.headerPaddingBottomProfile,
     paddingHorizontal: 20,
   },
+
   headerRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
   },
+
   loginButton: {
-    backgroundColor: '#ffffff',
+    backgroundColor: COLORS.white,
     paddingVertical: 8,
     paddingHorizontal: 15,
-    borderRadius: 25,
-    shadowColor: '#000',
+    borderRadius: SIZES.radiusM,
+    shadowColor: COLORS.black,
     shadowOpacity: 0.1,
     shadowOffset: { width: 0, height: 2 },
     shadowRadius: 4,
     elevation: 2,
   },
+
   loginButtonText: {
-    color: '#00a6ff',
-    fontSize: 16,
+    color: COLORS.primary,
+    fontSize: FONTS.text,
     fontWeight: '600',
   },
+
   headerRight: {
     paddingRight: 10,
   },
+
   title: {
-    fontSize: 32,
+    fontSize: FONTS.title,
     fontWeight: '700',
-    color: '#ffffff',
+    color: COLORS.white,
   },
+
   avatarWrapper: {
     marginTop: 25,
     alignItems: 'center',
     justifyContent: 'center',
   },
+
   avatarCircle: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-    backgroundColor: '#34cfff',
+    width: SIZES.avatarSize,
+    height: SIZES.avatarSize,
+    borderRadius: SIZES.avatarSize / 2,
+    backgroundColor: COLORS.avatarBlue,
     justifyContent: 'center',
     alignItems: 'center',
   },
+
   avatarIcon: {
     width: 50,
     height: 50,
     resizeMode: 'contain',
   },
+
   editIconWrapper: {
     position: 'absolute',
     bottom: 5,
     right: '35%',
-    backgroundColor: '#003b78',
+    backgroundColor: COLORS.avatarDark,
     width: 36,
     height: 36,
     borderRadius: 18,
     justifyContent: 'center',
     alignItems: 'center',
   },
+
   editIcon: {
     width: 22,
     height: 22,
     resizeMode: 'contain',
   },
+
   headerSpacer: {
     width: '100%',
-    height: 70,
-    backgroundColor: '#F7FBFF',
+    height: SIZES.spacerHeightProfile,
+    backgroundColor: COLORS.background,
   },
+
   inputRow: {
-    width: '85%',
+    width: SIZES.inputWidth,
     flexDirection: 'row',
     alignItems: 'center',
     marginTop: 30,
     borderBottomWidth: 2,
-    borderColor: '#00a6ff',
+    borderColor: COLORS.primary,
     paddingBottom: 3,
   },
+
   inputLeftIcon: {
     width: 20,
     height: 20,
     marginRight: 8,
     resizeMode: 'contain',
   },
+
   input: {
     flex: 1,
-    fontSize: 16,
+    fontSize: FONTS.text,
   },
+
   rowButtons: {
-    width: '85%',
+    width: SIZES.inputWidth,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     marginTop: 25,
   },
+
   skipButton: {
-    backgroundColor: '#ffffff',
+    backgroundColor: COLORS.white,
     paddingVertical: 8,
     paddingHorizontal: 20,
-    borderRadius: 25,
-    shadowColor: '#000',
+    borderRadius: SIZES.radiusM,
+    shadowColor: COLORS.black,
     shadowOpacity: 0.1,
     shadowOffset: { width: 0, height: 2 },
     shadowRadius: 4,
     elevation: 2,
   },
+
   skipButtonText: {
-    color: '#00a6ff',
-    fontSize: 16,
+    color: COLORS.primary,
+    fontSize: FONTS.text,
     fontWeight: '600',
   },
+
   button: {
-    backgroundColor: '#00a6ff',
-    width: 60,
-    height: 60,
-    borderRadius: 35,
+    backgroundColor: COLORS.primary,
+    width: SIZES.buttonSize,
+    height: SIZES.buttonSize,
+    borderRadius: SIZES.radiusL,
     justifyContent: 'center',
     alignItems: 'center',
   },
+
   disabled: {
     opacity: 0.4,
   },
+
   buttonIcon: {
     fontSize: 30,
-    color: '#ffffff',
+    color: COLORS.white,
   },
 });

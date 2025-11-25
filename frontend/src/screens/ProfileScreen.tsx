@@ -6,12 +6,11 @@ import {
   TextInput,
   KeyboardAvoidingView,
   Platform,
-  Alert,
   Image,
 } from 'react-native';
-import { useRoute, useNavigation } from '@react-navigation/native';
-import { registerUser } from '../api/auth';
-import { icons } from '../constants/icons';
+import { useNavigation } from '@react-navigation/native';
+import user from '../../assets/user.png';
+import pencil from '../../assets/pencil.png';
 import { styles } from './ProfileScreen.styles';
 
 const ProfileScreen = () => {
@@ -38,11 +37,11 @@ const ProfileScreen = () => {
 
         <View style={styles.avatarWrapper}>
           <View style={styles.avatarCircle}>
-            <Image source={icons.user} style={styles.avatarIcon} />
+            <Image source={user} style={styles.avatarIcon} />
           </View>
 
           <View style={styles.editIconWrapper}>
-            <Image source={icons.pencil} style={styles.editIcon} />
+            <Image source={pencil} style={styles.editIcon} />
           </View>
         </View>
       </View>
@@ -50,7 +49,7 @@ const ProfileScreen = () => {
       <View style={styles.headerSpacer} />
 
       <View style={styles.inputRow}>
-        <Image source={icons.user} style={styles.inputLeftIcon} />
+        <Image source={user} style={styles.inputLeftIcon} />
 
         <TextInput
           placeholder="Your Name"
