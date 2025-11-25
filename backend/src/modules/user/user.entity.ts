@@ -8,7 +8,7 @@ export class User {
   @Column({ unique: true })
   phone: string;
 
-  @Column({ nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   name: string | null;
 
   @Column()
