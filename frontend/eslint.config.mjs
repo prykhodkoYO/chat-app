@@ -7,11 +7,23 @@ import prettierPlugin from 'eslint-plugin-prettier';
 import prettierConfig from 'eslint-config-prettier';
 
 export default [
+  {
+    ignores: ['dist', 'node_modules'],
+  },
+
   js.configs.recommended,
   ...tseslint.configs.recommended,
   prettierConfig,
 
   {
+    files: ['**/*.{ts,tsx,js,jsx}'],
+
+    languageOptions: {
+      parser: tseslint.parser,
+      ecmaVersion: 'latest',
+      sourceType: 'module',
+    },
+
     plugins: {
       react,
       'react-hooks': reactHooks,
@@ -23,6 +35,7 @@ export default [
       'prettier/prettier': 'error',
       'react-refresh/only-export-components': 'warn',
       'react/react-in-jsx-scope': 'off',
+      ...reactHooks.configs.recommended.rules,
     },
 
     settings: {

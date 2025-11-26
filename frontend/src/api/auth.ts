@@ -1,4 +1,4 @@
-import { api } from "./axiosInstance";
+import { api } from './axiosInstance';
 
 interface RegisterData {
   phone: string;
@@ -7,12 +7,10 @@ interface RegisterData {
 
 export async function registerUser(data: RegisterData) {
   try {
-    const response = await api.post("/auth/register", data);
+    const response = await api.post('/auth/register', data);
     return response.data;
   } catch (error: any) {
-    console.log("Registration error:", error.response?.data || error.message);
-    throw new Error(
-      error.response?.data?.message || "Registration failed"
-    );
+    console.log('Registration error:', error.response?.data || error.message);
+    throw new Error(error.response?.data?.message || 'Registration failed');
   }
 }
