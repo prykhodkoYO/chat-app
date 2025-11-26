@@ -1,58 +1,48 @@
 import React, { useRef, useState } from 'react';
 import { View, Text, TouchableOpacity, KeyboardAvoidingView, Platform, Alert } from 'react-native';
 import PhoneInput from 'react-native-phone-number-input';
+import { useNavigation } from '@react-navigation/native';
 import { useForm, Controller } from 'react-hook-form';
 import Checkbox from 'expo-checkbox';
-import { useNavigation } from '@react-navigation/native';
 import PasswordInput from '../components/PasswordInput';
-import { styles } from './RegisterScreen.styles';
-import { registerUser } from '../api/auth';
+import { loginUser } from '../api/auth';
+import { styles } from './LoginScreen.styles';
 
 const MIN_PASSWORD_LENGTH = 6;
 
-interface RegisterForm {
+interface LoginForm {
   phone: string;
   password: string;
-  confirmPassword: string;
   remember: boolean;
 }
 
-const RegisterScreen = () => {
+const LoginScreen = () => {
   const navigation: any = useNavigation();
   const phoneRef = useRef<PhoneInput>(null);
   const [isPhoneValid, setIsPhoneValid] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [showConfirm, setShowConfirm] = useState(false);
 
-  const { control, handleSubmit, watch, setValue } = useForm<RegisterForm>({
+  const { control, handleSubmit, watch, setValue } = useForm<LoginForm>({
     defaultValues: {
       phone: '',
       password: '',
-      confirmPassword: '',
       remember: false,
     },
   });
 
   const phone = watch('phone');
   const password = watch('password');
-  const confirmPassword = watch('confirmPassword');
 
   const isPasswordValid = password.length >= MIN_PASSWORD_LENGTH;
-  const isConfirmValid =
-    confirmPassword.length >= MIN_PASSWORD_LENGTH && password === confirmPassword;
-
-  const isButtonDisabled = !isPhoneValid || !isPasswordValid || !isConfirmValid;
+  const isButtonDisabled = !isPhoneValid || !isPasswordValid;
 
   const onSubmit = async () => {
     try {
-      await registerUser({
-        phone,
-        password,
-      });
+      const res = await loginUser({ phone, password });
 
       navigation.navigate('Profile');
-    } catch (error: any) {
-      Alert.alert('Registration error', error.message);
+    } catch (e: any) {
+      Alert.alert('Login error', e.message);
     }
   };
 
@@ -63,15 +53,18 @@ const RegisterScreen = () => {
     >
       <View style={styles.header}>
         <View style={styles.headerRow}>
-          <TouchableOpacity style={styles.loginButton} onPress={() => navigation.navigate('Login')}>
-            <Text style={styles.loginButtonText}>← Login</Text>
-          </TouchableOpacity>
+          <View />
 
-          <View style={styles.headerRight}>
-            <Text style={styles.title}>Register</Text>
-            <Text style={styles.subtitle}>Enter your mobile phone</Text>
-          </View>
+          <TouchableOpacity
+            style={styles.registerButton}
+            onPress={() => navigation.navigate('Registration')}
+          >
+            <Text style={styles.registerButtonText}>Register</Text>
+          </TouchableOpacity>
         </View>
+
+        <Text style={styles.title}>Login</Text>
+        <Text style={styles.subtitle}>Enter your mobile phone</Text>
       </View>
 
       <View style={styles.headerSpacer} />
@@ -105,14 +98,6 @@ const RegisterScreen = () => {
         toggleSecure={() => setShowPassword(!showPassword)}
       />
 
-      <PasswordInput
-        value={confirmPassword}
-        onChangeText={(val) => setValue('confirmPassword', val)}
-        placeholder="Confirm Password"
-        secure={!showConfirm}
-        toggleSecure={() => setShowConfirm(!showConfirm)}
-      />
-
       <View style={styles.row}>
         <View style={styles.checkRow}>
           <Controller
@@ -137,4 +122,4 @@ const RegisterScreen = () => {
   );
 };
 
-export default RegisterScreen;
+export default LoginScreen;
