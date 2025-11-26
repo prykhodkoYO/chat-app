@@ -1,13 +1,6 @@
 import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  TextInput,
-  KeyboardAvoidingView,
-  Platform,
-  Image,
-} from 'react-native';
+import { View, Text, TouchableOpacity, TextInput, Image } from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { useNavigation } from '@react-navigation/native';
 import user from '../../assets/user.png';
 import pencil from '../../assets/pencil.png';
@@ -30,9 +23,11 @@ const ProfileScreen = () => {
   };
 
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+    <KeyboardAwareScrollView
+      contentContainerStyle={styles.container}
+      enableOnAndroid={true}
+      extraScrollHeight={40}
+      keyboardShouldPersistTaps="handled"
     >
       <View style={styles.header}>
         <View style={styles.headerRow}>
@@ -65,7 +60,6 @@ const ProfileScreen = () => {
           placeholder="Your Name"
           placeholderTextColor="#999"
           style={styles.input}
-          keyboardAppearance="dark"
           value={name}
           onChangeText={setName}
         />
@@ -83,7 +77,7 @@ const ProfileScreen = () => {
           <Text style={styles.buttonIcon}>→</Text>
         </TouchableOpacity>
       </View>
-    </KeyboardAvoidingView>
+    </KeyboardAwareScrollView>
   );
 };
 

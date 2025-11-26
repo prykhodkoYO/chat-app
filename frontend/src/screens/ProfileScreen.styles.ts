@@ -27,11 +27,6 @@ export const styles = StyleSheet.create({
     paddingVertical: 8,
     paddingHorizontal: 15,
     borderRadius: SIZES.radiusM,
-    shadowColor: COLORS.black,
-    shadowOpacity: 0.1,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 4,
-    elevation: 2,
   },
 
   loginButtonText: {
@@ -130,11 +125,6 @@ export const styles = StyleSheet.create({
     paddingVertical: 8,
     paddingHorizontal: 20,
     borderRadius: SIZES.radiusM,
-    shadowColor: COLORS.black,
-    shadowOpacity: 0.1,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 4,
-    elevation: 2,
   },
 
   skipButtonText: {

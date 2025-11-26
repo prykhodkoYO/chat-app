@@ -24,10 +24,18 @@ export default function PasswordInput({
         style={styles.input}
         secureTextEntry={secure}
         placeholder={placeholder}
-        value={value}
+        value={value ?? ''}
         onChangeText={onChangeText}
         placeholderTextColor="#888"
-        keyboardAppearance="dark"
+        textContentType="none"
+        autoComplete="off"
+        onFocus={() => {
+          setTimeout(() => {
+            if (!value) {
+              onChangeText('');
+            }
+          }, 0);
+        }}
       />
 
       <TouchableOpacity style={styles.eyeButton} onPress={toggleSecure}>

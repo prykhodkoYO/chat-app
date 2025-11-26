@@ -1,12 +1,14 @@
-import React, { useRef, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, KeyboardAvoidingView, Platform, Alert } from 'react-native';
-import PhoneInput from 'react-native-phone-number-input';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { useForm, Controller } from 'react-hook-form';
 import Checkbox from 'expo-checkbox';
 import { useNavigation } from '@react-navigation/native';
 import PasswordInput from '../components/PasswordInput';
+import PhoneField from '../components/PhoneField';
 import { styles } from './RegisterScreen.styles';
 import { registerUser } from '../api/auth';
+import { Country } from '../data/countries';
 
 const MIN_PASSWORD_LENGTH = 6;
 
@@ -19,12 +21,13 @@ interface RegisterForm {
 
 const RegisterScreen = () => {
   const navigation: any = useNavigation();
-  const phoneRef = useRef<PhoneInput>(null);
+
   const [isPhoneValid, setIsPhoneValid] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
+  const [selectedCountry, setSelectedCountry] = useState<Country | null>(null);
 
-  const { control, handleSubmit, watch, setValue } = useForm<RegisterForm>({
+  const { control, handleSubmit, watch, setValue, reset } = useForm<RegisterForm>({
     defaultValues: {
       phone: '',
       password: '',
@@ -33,20 +36,51 @@ const RegisterScreen = () => {
     },
   });
 
+  useEffect(() => {
+    reset();
+  }, []);
+
   const phone = watch('phone');
   const password = watch('password');
   const confirmPassword = watch('confirmPassword');
 
   const isPasswordValid = password.length >= MIN_PASSWORD_LENGTH;
-  const isConfirmValid =
-    confirmPassword.length >= MIN_PASSWORD_LENGTH && password === confirmPassword;
+  const isConfirmValid = confirmPassword.length >= MIN_PASSWORD_LENGTH;
+  const isPasswordsSame = password === confirmPassword;
 
-  const isButtonDisabled = !isPhoneValid || !isPasswordValid || !isConfirmValid;
+  const isButtonDisabled = !isPhoneValid || !isPasswordValid || !isConfirmValid || !isPasswordsSame;
 
   const onSubmit = async () => {
+    if (!isPhoneValid) {
+      Alert.alert('Error', 'Invalid phone number');
+      return;
+    }
+
+    if (!isPasswordValid) {
+      Alert.alert('Error', `Password must be at least ${MIN_PASSWORD_LENGTH} characters`);
+      return;
+    }
+
+    if (!isConfirmValid) {
+      Alert.alert('Error', `Confirm password must be at least ${MIN_PASSWORD_LENGTH} characters`);
+      return;
+    }
+
+    if (!isPasswordsSame) {
+      Alert.alert('Error', 'Passwords do not match');
+      return;
+    }
+
+    if (!selectedCountry) {
+      Alert.alert('Error', 'Country not selected');
+      return;
+    }
+
+    const fullPhone = `+${selectedCountry.callingCode}${phone}`;
+
     try {
       await registerUser({
-        phone,
+        phone: fullPhone,
         password,
       });
 
@@ -57,9 +91,11 @@ const RegisterScreen = () => {
   };
 
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+    <KeyboardAwareScrollView
+      contentContainerStyle={styles.container}
+      enableOnAndroid={true}
+      extraScrollHeight={40}
+      keyboardShouldPersistTaps="handled"
     >
       <View style={styles.header}>
         <View style={styles.headerRow}>
@@ -79,20 +115,12 @@ const RegisterScreen = () => {
       <Controller
         control={control}
         name="phone"
-        rules={{ required: true }}
         render={({ field: { onChange, value } }) => (
-          <PhoneInput
-            ref={phoneRef}
-            defaultCode="UA"
-            layout="first"
+          <PhoneField
             value={value}
-            textInputProps={{ keyboardAppearance: 'dark' }}
-            onChangeFormattedText={(text) => {
-              onChange(text);
-              setIsPhoneValid(phoneRef.current?.isValidNumber(text) || false);
-            }}
-            containerStyle={styles.phoneContainer}
-            textContainerStyle={styles.phoneTextContainer}
+            onChange={onChange}
+            onValidChange={(valid) => setIsPhoneValid(valid)}
+            onCountryChange={(country: Country) => setSelectedCountry(country)}
           />
         )}
       />
@@ -100,18 +128,28 @@ const RegisterScreen = () => {
       <PasswordInput
         value={password}
         onChangeText={(val) => setValue('password', val)}
-        placeholder="Password"
+        placeholder={`Password (min ${MIN_PASSWORD_LENGTH} symbols)`}
         secure={!showPassword}
         toggleSecure={() => setShowPassword(!showPassword)}
       />
 
+      {!isPasswordValid && password.length > 0 && (
+        <Text style={styles.errorText}>
+          Password must be at least {MIN_PASSWORD_LENGTH} characters
+        </Text>
+      )}
+
       <PasswordInput
         value={confirmPassword}
         onChangeText={(val) => setValue('confirmPassword', val)}
-        placeholder="Confirm Password"
+        placeholder={`Confirm Password (min ${MIN_PASSWORD_LENGTH} symbols)`}
         secure={!showConfirm}
         toggleSecure={() => setShowConfirm(!showConfirm)}
       />
+
+      {!isPasswordsSame && confirmPassword.length > 0 && (
+        <Text style={styles.errorText}>Passwords do not match</Text>
+      )}
 
       <View style={styles.row}>
         <View style={styles.checkRow}>
@@ -133,7 +171,7 @@ const RegisterScreen = () => {
           <Text style={styles.buttonIcon}>→</Text>
         </TouchableOpacity>
       </View>
-    </KeyboardAvoidingView>
+    </KeyboardAwareScrollView>
   );
 };
 

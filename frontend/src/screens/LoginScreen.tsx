@@ -1,12 +1,16 @@
-import React, { useRef, useState } from 'react';
-import { View, Text, TouchableOpacity, KeyboardAvoidingView, Platform, Alert } from 'react-native';
-import PhoneInput from 'react-native-phone-number-input';
+import React, { useState } from 'react';
+import { View, Text, TouchableOpacity, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useForm, Controller } from 'react-hook-form';
 import Checkbox from 'expo-checkbox';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+
 import PasswordInput from '../components/PasswordInput';
+import PhoneField from '../components/PhoneField';
+
 import { loginUser } from '../api/auth';
 import { styles } from './LoginScreen.styles';
+import { Country } from '../data/countries';
 
 const MIN_PASSWORD_LENGTH = 6;
 
@@ -18,7 +22,8 @@ interface LoginForm {
 
 const LoginScreen = () => {
   const navigation: any = useNavigation();
-  const phoneRef = useRef<PhoneInput>(null);
+
+  const [selectedCountry, setSelectedCountry] = useState<Country | null>(null);
   const [isPhoneValid, setIsPhoneValid] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
@@ -37,8 +42,18 @@ const LoginScreen = () => {
   const isButtonDisabled = !isPhoneValid || !isPasswordValid;
 
   const onSubmit = async () => {
+    if (!selectedCountry) {
+      Alert.alert('Error', 'Country not selected');
+      return;
+    }
+
+    const fullPhone = `+${selectedCountry.callingCode}${phone}`;
+
     try {
-      const res = await loginUser({ phone, password });
+      await loginUser({
+        phone: fullPhone,
+        password,
+      });
 
       navigation.navigate('Profile');
     } catch (e: any) {
@@ -47,9 +62,11 @@ const LoginScreen = () => {
   };
 
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+    <KeyboardAwareScrollView
+      contentContainerStyle={styles.container}
+      enableOnAndroid={true}
+      extraScrollHeight={40}
+      keyboardShouldPersistTaps="handled"
     >
       <View style={styles.header}>
         <View style={styles.headerRow}>
@@ -72,20 +89,12 @@ const LoginScreen = () => {
       <Controller
         control={control}
         name="phone"
-        rules={{ required: true }}
         render={({ field: { onChange, value } }) => (
-          <PhoneInput
-            ref={phoneRef}
-            defaultCode="UA"
-            layout="first"
+          <PhoneField
             value={value}
-            textInputProps={{ keyboardAppearance: 'dark' }}
-            onChangeFormattedText={(text) => {
-              onChange(text);
-              setIsPhoneValid(phoneRef.current?.isValidNumber(text) || false);
-            }}
-            containerStyle={styles.phoneContainer}
-            textContainerStyle={styles.phoneTextContainer}
+            onChange={onChange}
+            onValidChange={(valid) => setIsPhoneValid(valid)}
+            onCountryChange={(country) => setSelectedCountry(country)}
           />
         )}
       />
@@ -118,7 +127,7 @@ const LoginScreen = () => {
           <Text style={styles.buttonIcon}>→</Text>
         </TouchableOpacity>
       </View>
-    </KeyboardAvoidingView>
+    </KeyboardAwareScrollView>
   );
 };
 
