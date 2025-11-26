@@ -12,12 +12,22 @@ import { useNavigation } from '@react-navigation/native';
 import user from '../../assets/user.png';
 import pencil from '../../assets/pencil.png';
 import { styles } from './ProfileScreen.styles';
+import { logout } from '../api/auth';
 
 const ProfileScreen = () => {
-  const navigation = useNavigation();
+  const navigation: any = useNavigation();
   const [name, setName] = useState('');
 
   const isNextDisabled = !name.trim();
+
+  const handleLogout = async () => {
+    await logout();
+
+    navigation.reset({
+      index: 0,
+      routes: [{ name: 'Login' }],
+    });
+  };
 
   return (
     <KeyboardAvoidingView
@@ -26,8 +36,8 @@ const ProfileScreen = () => {
     >
       <View style={styles.header}>
         <View style={styles.headerRow}>
-          <TouchableOpacity style={styles.loginButton}>
-            <Text style={styles.loginButtonText}>← Login</Text>
+          <TouchableOpacity style={styles.loginButton} onPress={handleLogout}>
+            <Text style={styles.loginButtonText}>Logout</Text>
           </TouchableOpacity>
 
           <View style={styles.headerRight}>

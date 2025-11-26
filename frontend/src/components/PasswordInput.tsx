@@ -27,6 +27,7 @@ export default function PasswordInput({
         value={value}
         onChangeText={onChangeText}
         placeholderTextColor="#888"
+        keyboardAppearance="dark"
       />
 
       <TouchableOpacity style={styles.eyeButton} onPress={toggleSecure}>
