@@ -1,9 +1,9 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import * as bcrypt from 'bcrypt';
-import { RegisterDto } from './dto/register.dto';
-import { User } from './user.entity';
+import { User, ProfileStatus } from './user.entity';
+import { UpdateProfileDto } from './dto/update-profile.dto';
+import { v2 as cloudinary } from 'cloudinary';
 
 @Injectable()
 export class UserService {
@@ -12,31 +12,37 @@ export class UserService {
     private readonly userRepo: Repository<User>,
   ) {}
 
-  async register(dto: RegisterDto) {
-    const existing = await this.userRepo.findOne({
-      where: { phone: dto.phone },
+  async updateProfile(userId: number, dto: UpdateProfileDto) {
+    const user = await this.userRepo.findOne({
+      where: { id: userId },
     });
 
-    if (existing) {
-      throw new BadRequestException('This phone number is already registered');
+    if (!user) throw new BadRequestException('User not found');
+
+    let avatarUrl = user.avatarUrl;
+
+    if (dto.avatar) {
+      const upload = await cloudinary.uploader.upload(dto.avatar, {
+        folder: 'avatars',
+        transformation: [{ width: 400, height: 400, crop: 'fill' }],
+      });
+
+      avatarUrl = upload.secure_url;
     }
 
-    const hashed = await bcrypt.hash(dto.password, 10);
-
-    const user = this.userRepo.create({
-      phone: dto.phone,
-      name: null,
-      password: hashed,
-    });
+    user.name = dto.name ?? user.name;
+    user.avatarUrl = avatarUrl;
+    user.profileStatus = ProfileStatus.COMPLETED;
 
     await this.userRepo.save(user);
 
     return {
-      message: 'User registered successfully',
+      message: 'Profile updated',
       user: {
         id: user.id,
-        phone: user.phone,
         name: user.name,
+        avatarUrl: user.avatarUrl,
+        profileStatus: user.profileStatus,
       },
     };
   }

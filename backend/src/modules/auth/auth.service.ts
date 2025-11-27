@@ -1,11 +1,12 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, UnauthorizedException, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
 
-import { User } from '../user/user.entity';
+import { User, ProfileStatus } from '../user/user.entity';
 import { LoginDto } from './dto/login.dto';
+import { RegisterDto } from './dto/register.dto';
 
 @Injectable()
 export class AuthService {
@@ -36,6 +37,45 @@ export class AuthService {
 
     return {
       message: 'Login successful',
+      token,
+      user: {
+        id: user.id,
+        phone: user.phone,
+        name: user.name,
+        avatarUrl: user.avatarUrl,
+        profileStatus: user.profileStatus,
+      },
+    };
+  }
+
+  async register(dto: RegisterDto) {
+    const existing = await this.usersRepo.findOne({
+      where: { phone: dto.phone },
+    });
+
+    if (existing) {
+      throw new BadRequestException('This phone number is already registered');
+    }
+
+    const hashed = await bcrypt.hash(dto.password, 10);
+
+    const user = this.usersRepo.create({
+      phone: dto.phone,
+      name: null,
+      password: hashed,
+      avatarUrl: null,
+      profileStatus: ProfileStatus.EMPTY,
+    });
+
+    await this.usersRepo.save(user);
+
+    const token = await this.jwtService.signAsync(
+      { id: user.id, phone: user.phone },
+      { expiresIn: '1d' },
+    );
+
+    return {
+      message: 'User registered successfully',
       token,
       user: {
         id: user.id,

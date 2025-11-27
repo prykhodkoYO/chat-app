@@ -1,13 +1,30 @@
-import { Controller, Post, Body } from '@nestjs/common';
-import { RegisterDto } from './dto/register.dto';
+import {
+  Controller,
+  Body,
+  UseGuards,
+  Req,
+  Patch,
+  UseInterceptors,
+  Put,
+  UploadedFile,
+} from '@nestjs/common';
 import { UserService } from './user.service';
+import { UpdateProfileDto } from './dto/update-profile.dto';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
+import { CurrentUser } from '../auth/current-user.decorator';
 
-@Controller('auth')
+@Controller('user')
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(
+    private userService: UserService,
+    private cloudinary: CloudinaryService,
+  ) {}
 
-  @Post('register')
-  register(@Body() dto: RegisterDto) {
-    return this.userService.register(dto);
+  @Put('profile')
+  @UseGuards(JwtAuthGuard)
+  updateProfile(@CurrentUser() user, @Body() dto: UpdateProfileDto) {
+    return this.userService.updateProfile(user.id, dto);
   }
 }

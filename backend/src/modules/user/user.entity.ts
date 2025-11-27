@@ -1,5 +1,10 @@
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
+export enum ProfileStatus {
+  EMPTY = 'EMPTY',
+  COMPLETED = 'COMPLETED',
+}
+
 @Entity('users')
 export class User {
   @PrimaryGeneratedColumn('uuid')
@@ -13,6 +18,16 @@ export class User {
 
   @Column()
   password: string;
+
+  @Column({ nullable: true })
+  avatarUrl: string | null;
+
+  @Column({
+    type: 'enum',
+    enum: ProfileStatus,
+    default: ProfileStatus.EMPTY,
+  })
+  profileStatus: ProfileStatus;
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;
