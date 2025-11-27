@@ -6,6 +6,5 @@ export class UpdateProfileDto {
   name?: string;
 
   @IsOptional()
-  @IsString()
   avatar?: string | null;
 }
