@@ -1,12 +1,13 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import RegisterScreen from '../screens/Register/RegisterScreen';
-import ProfileScreen from '../screens/Profile/ProfileScreen';
-import LoginScreen from '../screens/Login/LoginScreen';
-import AuthLoading from './AuthLoading';
+import RegisterScreen from '../screens/register/RegisterScreen';
+import ProfileScreen from '../screens/profile/ProfileScreen';
+import LoginScreen from '../screens/login/LoginScreen';
+import AuthLoading from './authLoading/AuthLoading';
+import { RootStackParamList } from '../types/navigation.types';
 
-const Stack = createNativeStackNavigator();
+const Stack = createNativeStackNavigator<RootStackParamList>();
 
 const AppNavigator = () => {
   return (

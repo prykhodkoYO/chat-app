@@ -1,6 +1,8 @@
 import React, { useEffect } from 'react';
 import { View, ActivityIndicator } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { styles } from './AuthLoading.styles';
+import { COLORS } from '../../constants/style';
 
 export default function AuthLoading({ navigation }: any) {
   useEffect(() => {
@@ -24,8 +26,8 @@ export default function AuthLoading({ navigation }: any) {
   }, []);
 
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <ActivityIndicator size="large" color="#0095ff" />
+    <View style={styles.loaderWrapper}>
+      <ActivityIndicator size="large" color={COLORS.accentBlue} />
     </View>
   );
 }

@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { View, TextInput, TouchableOpacity, Text, StyleSheet } from 'react-native';
-import { countries, Country } from '../data/countries';
-import CountryModal from './CountryModal';
+import { countries, Country } from '../../data/countries';
+import CountryModal from '../CountryModal';
+import { styles } from './PhoneField.styles';
 
 interface Props {
   value: string;
@@ -61,34 +62,3 @@ export default function PhoneField({ value, onChange, onValidChange, onCountryCh
     </>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    width: '85%',
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderBottomWidth: 2,
-    borderColor: '#007ACC',
-    marginTop: 25,
-    paddingBottom: 6,
-  },
-  countryBox: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginRight: 10,
-  },
-  flag: {
-    fontSize: 26,
-    marginRight: 6,
-  },
-  code: {
-    fontSize: 18,
-    color: '#000',
-  },
-  input: {
-    flex: 1,
-    fontSize: 18,
-    color: '#000',
-    paddingVertical: 6,
-  },
-});

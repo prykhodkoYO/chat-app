@@ -5,13 +5,14 @@ import { useForm, Controller } from 'react-hook-form';
 import Checkbox from 'expo-checkbox';
 import { useNavigation } from '@react-navigation/native';
 import PasswordInput from '../../components/PasswordInput';
-import PhoneField from '../../components/PhoneField';
+import PhoneField from '../../components/phoneField/PhoneField';
 import { styles } from './RegisterScreen.styles';
 import { registerUser } from '../../api/auth';
 import { Country } from '../../data/countries';
 import { COLORS } from '../../constants/style';
 import { ActivityIndicator } from 'react-native';
 import { saveToken } from '../../api/tokenStorage';
+import { RootStackNavigation } from '../../types/navigation.types';
 
 const MIN_PASSWORD_LENGTH = 6;
 
@@ -23,7 +24,7 @@ interface RegisterForm {
 }
 
 const RegisterScreen = () => {
-  const navigation: any = useNavigation();
+  const navigation = useNavigation<RootStackNavigation>();
 
   const [isPhoneValid, setIsPhoneValid] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -116,7 +117,7 @@ const RegisterScreen = () => {
     >
       <View style={styles.header}>
         <View style={styles.headerRow}>
-          <TouchableOpacity style={styles.loginButton} onPress={() => navigation.goBack('Login')}>
+          <TouchableOpacity style={styles.loginButton} onPress={() => navigation.goBack()}>
             <Text style={styles.loginButtonText}>← Login</Text>
           </TouchableOpacity>
 
@@ -174,7 +175,7 @@ const RegisterScreen = () => {
             control={control}
             name="remember"
             render={({ field: { onChange, value } }) => (
-              <Checkbox value={value} onValueChange={onChange} color="#0095ff" />
+              <Checkbox value={value} onValueChange={onChange} color={COLORS.accentBlue} />
             )}
           />
           <Text style={styles.checkLabel}>Remember me</Text>
@@ -186,7 +187,7 @@ const RegisterScreen = () => {
           onPress={handleSubmit(onSubmit)}
         >
           {isLoading ? (
-            <ActivityIndicator color="#fff" />
+            <ActivityIndicator color={COLORS.white} />
           ) : (
             <Text style={styles.buttonIcon}>→</Text>
           )}

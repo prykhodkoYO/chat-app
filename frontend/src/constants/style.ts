@@ -4,9 +4,10 @@ export const COLORS = {
   black: '#000000',
   grayLight: '#e8f7ff',
   background: '#F7FBFF',
-
+  primaryDark: '#007ACC',
   avatarBlue: '#34cfff',
   avatarDark: '#003b78',
+  accentBlue: '#0095ff',
 };
 
 export const SIZES = {

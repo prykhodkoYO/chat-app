@@ -6,9 +6,10 @@ import user from '../../../assets/user.png';
 import pencil from '../../../assets/pencil.png';
 import { styles } from './ProfileScreen.styles';
 import { logout } from '../../api/auth';
+import { RootStackNavigation } from '../../types/navigation.types';
 
 const ProfileScreen = () => {
-  const navigation: any = useNavigation();
+  const navigation = useNavigation<RootStackNavigation>();
   const [name, setName] = useState('');
 
   const isNextDisabled = !name.trim();

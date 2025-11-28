@@ -7,11 +7,12 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import { COLORS } from '../../constants/style';
 import { ActivityIndicator } from 'react-native';
 import PasswordInput from '../../components/PasswordInput';
-import PhoneField from '../../components/PhoneField';
+import PhoneField from '../../components/phoneField/PhoneField';
 import { loginUser } from '../../api/auth';
 import { saveToken } from '../../api/tokenStorage';
 import { styles } from './LoginScreen.styles';
 import { Country } from '../../data/countries';
+import { RootStackNavigation } from '../../types/navigation.types';
 
 const MIN_PASSWORD_LENGTH = 6;
 
@@ -22,7 +23,7 @@ interface LoginForm {
 }
 
 const LoginScreen = () => {
-  const navigation: any = useNavigation();
+  const navigation = useNavigation<RootStackNavigation>();
 
   const [selectedCountry, setSelectedCountry] = useState<Country | null>(null);
   const [isPhoneValid, setIsPhoneValid] = useState(false);
@@ -128,7 +129,7 @@ const LoginScreen = () => {
             control={control}
             name="remember"
             render={({ field: { onChange, value } }) => (
-              <Checkbox value={value} onValueChange={onChange} color="#0095ff" />
+              <Checkbox value={value} onValueChange={onChange} color={COLORS.accentBlue} />
             )}
           />
           <Text style={styles.checkLabel}>Remember me</Text>
@@ -140,7 +141,7 @@ const LoginScreen = () => {
           onPress={handleSubmit(onSubmit)}
         >
           {isLoading ? (
-            <ActivityIndicator color="#fff" />
+            <ActivityIndicator color={COLORS.white} />
           ) : (
             <Text style={styles.buttonIcon}>→</Text>
           )}
