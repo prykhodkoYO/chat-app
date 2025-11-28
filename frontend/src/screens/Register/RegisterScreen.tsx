@@ -1,14 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, KeyboardAvoidingView, Platform, Alert } from 'react-native';
+import { View, Text, TouchableOpacity, Alert } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { useForm, Controller } from 'react-hook-form';
 import Checkbox from 'expo-checkbox';
 import { useNavigation } from '@react-navigation/native';
-import PasswordInput from '../components/PasswordInput';
-import PhoneField from '../components/PhoneField';
+import PasswordInput from '../../components/PasswordInput';
+import PhoneField from '../../components/PhoneField';
 import { styles } from './RegisterScreen.styles';
-import { registerUser } from '../api/auth';
-import { Country } from '../data/countries';
+import { registerUser } from '../../api/auth';
+import { Country } from '../../data/countries';
+import { COLORS } from '../../constants/style';
+import { ActivityIndicator } from 'react-native';
+import { saveToken } from '../../api/tokenStorage';
 
 const MIN_PASSWORD_LENGTH = 6;
 
@@ -25,6 +28,7 @@ const RegisterScreen = () => {
   const [isPhoneValid, setIsPhoneValid] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [selectedCountry, setSelectedCountry] = useState<Country | null>(null);
 
   const { control, handleSubmit, watch, setValue, reset } = useForm<RegisterForm>({
@@ -50,7 +54,7 @@ const RegisterScreen = () => {
 
   const isButtonDisabled = !isPhoneValid || !isPasswordValid || !isConfirmValid || !isPasswordsSame;
 
-  const onSubmit = async () => {
+  const onSubmit = async ({ remember }: RegisterForm) => {
     if (!isPhoneValid) {
       Alert.alert('Error', 'Invalid phone number');
       return;
@@ -79,27 +83,40 @@ const RegisterScreen = () => {
     const fullPhone = `+${selectedCountry.callingCode}${phone}`;
 
     try {
-      await registerUser({
+      setIsLoading(true);
+
+      const res = await registerUser({
         phone: fullPhone,
         password,
       });
 
-      navigation.navigate('Profile');
+      if (remember) {
+        await saveToken(res.token);
+      }
+
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'Profile' }],
+      });
     } catch (error: any) {
       Alert.alert('Registration error', error.message);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
     <KeyboardAwareScrollView
+      style={{ flex: 1, backgroundColor: COLORS.white }}
       contentContainerStyle={styles.container}
       enableOnAndroid={true}
-      extraScrollHeight={40}
+      enableAutomaticScroll
+      extraScrollHeight={80}
       keyboardShouldPersistTaps="handled"
     >
       <View style={styles.header}>
         <View style={styles.headerRow}>
-          <TouchableOpacity style={styles.loginButton} onPress={() => navigation.navigate('Login')}>
+          <TouchableOpacity style={styles.loginButton} onPress={() => navigation.replace('Login')}>
             <Text style={styles.loginButtonText}>← Login</Text>
           </TouchableOpacity>
 
@@ -164,11 +181,15 @@ const RegisterScreen = () => {
         </View>
 
         <TouchableOpacity
-          style={[styles.button, isButtonDisabled && styles.disabled]}
-          disabled={isButtonDisabled}
+          style={[styles.button, (isButtonDisabled || isLoading) && styles.disabled]}
+          disabled={isButtonDisabled || isLoading}
           onPress={handleSubmit(onSubmit)}
         >
-          <Text style={styles.buttonIcon}>→</Text>
+          {isLoading ? (
+            <ActivityIndicator color="#fff" />
+          ) : (
+            <Text style={styles.buttonIcon}>→</Text>
+          )}
         </TouchableOpacity>
       </View>
     </KeyboardAwareScrollView>

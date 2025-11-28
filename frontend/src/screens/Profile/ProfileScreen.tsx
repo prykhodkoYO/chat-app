@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, TextInput, Image } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { useNavigation } from '@react-navigation/native';
-import user from '../../assets/user.png';
-import pencil from '../../assets/pencil.png';
+import user from '../../../assets/user.png';
+import pencil from '../../../assets/pencil.png';
 import { styles } from './ProfileScreen.styles';
-import { logout } from '../api/auth';
+import { logout } from '../../api/auth';
 
 const ProfileScreen = () => {
   const navigation: any = useNavigation();

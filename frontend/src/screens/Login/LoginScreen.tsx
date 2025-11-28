@@ -4,13 +4,14 @@ import { useNavigation } from '@react-navigation/native';
 import { useForm, Controller } from 'react-hook-form';
 import Checkbox from 'expo-checkbox';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-
-import PasswordInput from '../components/PasswordInput';
-import PhoneField from '../components/PhoneField';
-
-import { loginUser } from '../api/auth';
+import { COLORS } from '../../constants/style';
+import { ActivityIndicator } from 'react-native';
+import PasswordInput from '../../components/PasswordInput';
+import PhoneField from '../../components/PhoneField';
+import { loginUser } from '../../api/auth';
+import { saveToken } from '../../api/tokenStorage';
 import { styles } from './LoginScreen.styles';
-import { Country } from '../data/countries';
+import { Country } from '../../data/countries';
 
 const MIN_PASSWORD_LENGTH = 6;
 
@@ -26,6 +27,7 @@ const LoginScreen = () => {
   const [selectedCountry, setSelectedCountry] = useState<Country | null>(null);
   const [isPhoneValid, setIsPhoneValid] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const { control, handleSubmit, watch, setValue } = useForm<LoginForm>({
     defaultValues: {
@@ -41,7 +43,7 @@ const LoginScreen = () => {
   const isPasswordValid = password.length >= MIN_PASSWORD_LENGTH;
   const isButtonDisabled = !isPhoneValid || !isPasswordValid;
 
-  const onSubmit = async () => {
+  const onSubmit = async ({ remember }: LoginForm) => {
     if (!selectedCountry) {
       Alert.alert('Error', 'Country not selected');
       return;
@@ -50,22 +52,35 @@ const LoginScreen = () => {
     const fullPhone = `+${selectedCountry.callingCode}${phone}`;
 
     try {
-      await loginUser({
+      setIsLoading(true);
+
+      const res = await loginUser({
         phone: fullPhone,
         password,
       });
 
-      navigation.navigate('Profile');
+      if (remember) {
+        await saveToken(res.token);
+      }
+
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'Profile' }],
+      });
     } catch (e: any) {
       Alert.alert('Login error', e.message);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
     <KeyboardAwareScrollView
+      style={{ flex: 1, backgroundColor: COLORS.white }}
       contentContainerStyle={styles.container}
       enableOnAndroid={true}
-      extraScrollHeight={40}
+      enableAutomaticScroll
+      extraScrollHeight={80}
       keyboardShouldPersistTaps="handled"
     >
       <View style={styles.header}>
@@ -74,7 +89,7 @@ const LoginScreen = () => {
 
           <TouchableOpacity
             style={styles.registerButton}
-            onPress={() => navigation.navigate('Registration')}
+            onPress={() => navigation.replace('Registration')}
           >
             <Text style={styles.registerButtonText}>Register</Text>
           </TouchableOpacity>
@@ -120,11 +135,15 @@ const LoginScreen = () => {
         </View>
 
         <TouchableOpacity
-          style={[styles.button, isButtonDisabled && styles.disabled]}
-          disabled={isButtonDisabled}
+          style={[styles.button, (isButtonDisabled || isLoading) && styles.disabled]}
+          disabled={isButtonDisabled || isLoading}
           onPress={handleSubmit(onSubmit)}
         >
-          <Text style={styles.buttonIcon}>→</Text>
+          {isLoading ? (
+            <ActivityIndicator color="#fff" />
+          ) : (
+            <Text style={styles.buttonIcon}>→</Text>
+          )}
         </TouchableOpacity>
       </View>
     </KeyboardAwareScrollView>
