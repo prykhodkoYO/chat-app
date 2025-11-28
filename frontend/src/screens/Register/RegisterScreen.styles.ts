@@ -1,9 +1,10 @@
 import { StyleSheet } from 'react-native';
-import { COLORS, FONTS, SIZES } from '../constants/style';
+import { COLORS, FONTS, SIZES } from '../../constants/style';
 
 export const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flexGrow: 1,
+    paddingBottom: 150,
     backgroundColor: COLORS.white,
     alignItems: 'center',
   },
@@ -27,7 +28,6 @@ export const styles = StyleSheet.create({
     paddingVertical: 8,
     paddingHorizontal: 15,
     borderRadius: SIZES.radiusM,
-    elevation: 2,
   },
 
   loginButtonText: {
@@ -56,18 +56,6 @@ export const styles = StyleSheet.create({
     width: '100%',
     height: SIZES.spacerHeight,
     backgroundColor: COLORS.background,
-  },
-
-  phoneContainer: {
-    width: SIZES.inputWidth,
-    marginTop: 40,
-    borderBottomWidth: 2,
-    borderColor: COLORS.primary,
-    paddingBottom: 3,
-  },
-
-  phoneTextContainer: {
-    backgroundColor: 'transparent',
   },
 
   row: {
@@ -104,5 +92,12 @@ export const styles = StyleSheet.create({
   buttonIcon: {
     fontSize: 30,
     color: COLORS.white,
+  },
+
+  errorText: {
+    color: 'red',
+    marginTop: 4,
+    marginBottom: 10,
+    fontSize: 14,
   },
 });

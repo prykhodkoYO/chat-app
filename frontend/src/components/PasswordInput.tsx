@@ -18,15 +18,25 @@ export default function PasswordInput({
   secure,
   toggleSecure,
 }: PasswordInputProps) {
+  const handleFocus = () => {
+    setTimeout(() => {
+      if (!value) {
+        onChangeText('');
+      }
+    }, 0);
+  };
   return (
     <View style={styles.wrapper}>
       <TextInput
         style={styles.input}
         secureTextEntry={secure}
         placeholder={placeholder}
-        value={value}
+        value={value ?? ''}
         onChangeText={onChangeText}
         placeholderTextColor="#888"
+        textContentType="none"
+        autoComplete="off"
+        onFocus={handleFocus}
       />
 
       <TouchableOpacity style={styles.eyeButton} onPress={toggleSecure}>

@@ -1,33 +1,39 @@
 import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  TextInput,
-  KeyboardAvoidingView,
-  Platform,
-  Image,
-} from 'react-native';
+import { View, Text, TouchableOpacity, TextInput, Image } from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { useNavigation } from '@react-navigation/native';
-import user from '../../assets/user.png';
-import pencil from '../../assets/pencil.png';
+import user from '../../../assets/user.png';
+import pencil from '../../../assets/pencil.png';
 import { styles } from './ProfileScreen.styles';
+import { logout } from '../../api/auth';
+import { RootStackNavigation } from '../../types/navigation.types';
 
 const ProfileScreen = () => {
-  const navigation = useNavigation();
+  const navigation = useNavigation<RootStackNavigation>();
   const [name, setName] = useState('');
 
   const isNextDisabled = !name.trim();
 
+  const handleLogout = async () => {
+    await logout();
+
+    navigation.reset({
+      index: 0,
+      routes: [{ name: 'Login' }],
+    });
+  };
+
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+    <KeyboardAwareScrollView
+      contentContainerStyle={styles.container}
+      enableOnAndroid={true}
+      extraScrollHeight={40}
+      keyboardShouldPersistTaps="handled"
     >
       <View style={styles.header}>
         <View style={styles.headerRow}>
-          <TouchableOpacity style={styles.loginButton}>
-            <Text style={styles.loginButtonText}>← Login</Text>
+          <TouchableOpacity style={styles.loginButton} onPress={handleLogout}>
+            <Text style={styles.loginButtonText}>Logout</Text>
           </TouchableOpacity>
 
           <View style={styles.headerRight}>
@@ -55,7 +61,6 @@ const ProfileScreen = () => {
           placeholder="Your Name"
           placeholderTextColor="#999"
           style={styles.input}
-          keyboardAppearance="dark"
           value={name}
           onChangeText={setName}
         />
@@ -73,7 +78,7 @@ const ProfileScreen = () => {
           <Text style={styles.buttonIcon}>→</Text>
         </TouchableOpacity>
       </View>
-    </KeyboardAvoidingView>
+    </KeyboardAwareScrollView>
   );
 };
 
