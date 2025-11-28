@@ -116,7 +116,7 @@ const RegisterScreen = () => {
     >
       <View style={styles.header}>
         <View style={styles.headerRow}>
-          <TouchableOpacity style={styles.loginButton} onPress={() => navigation.replace('Login')}>
+          <TouchableOpacity style={styles.loginButton} onPress={() => navigation.goBack('Login')}>
             <Text style={styles.loginButtonText}>← Login</Text>
           </TouchableOpacity>
 
