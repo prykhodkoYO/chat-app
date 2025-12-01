@@ -12,7 +12,7 @@ export default function AuthLoading({ navigation }: any) {
       if (token) {
         navigation.reset({
           index: 0,
-          routes: [{ name: 'Profile' }],
+          routes: [{ name: 'Home' }],
         });
       } else {
         navigation.reset({

@@ -91,9 +91,7 @@ const RegisterScreen = () => {
         password,
       });
 
-      if (remember) {
-        await saveToken(res.token);
-      }
+      await saveToken(res.token);
 
       navigation.reset({
         index: 0,

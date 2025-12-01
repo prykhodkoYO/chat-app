@@ -1,5 +1,4 @@
 import { api } from './axiosInstance';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { removeToken } from './tokenStorage';
 
 interface RegisterData {

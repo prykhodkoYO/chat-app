@@ -8,6 +8,7 @@ export const COLORS = {
   avatarBlue: '#34cfff',
   avatarDark: '#003b78',
   accentBlue: '#0095ff',
+  red: '#ff0000ff',
 };
 
 export const SIZES = {

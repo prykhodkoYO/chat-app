@@ -7,3 +7,7 @@ export async function saveToken(token: string) {
 export async function removeToken() {
   await AsyncStorage.removeItem('token');
 }
+
+export async function getToken() {
+  return await AsyncStorage.getItem('token');
+}

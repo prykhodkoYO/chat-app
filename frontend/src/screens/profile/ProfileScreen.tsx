@@ -1,81 +1,184 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, TextInput, Image } from 'react-native';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  TextInput,
+  Image,
+  ActivityIndicator,
+  Alert,
+} from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import { useNavigation } from '@react-navigation/native';
-import user from '../../../assets/user.png';
-import pencil from '../../../assets/pencil.png';
+import * as ImagePicker from 'expo-image-picker';
+import * as ImageManipulator from 'expo-image-manipulator';
+
+import userIcon from '../../../assets/user.png';
+import pencilIcon from '../../../assets/pencil.png';
+
 import { styles } from './ProfileScreen.styles';
 import { logout } from '../../api/auth';
+import { updateProfile } from '../../api/user';
 import { RootStackNavigation } from '../../types/navigation.types';
+import { useNavigation } from '@react-navigation/native';
 
-const ProfileScreen = () => {
+export const ProfileScreen = () => {
   const navigation = useNavigation<RootStackNavigation>();
-  const [name, setName] = useState('');
 
-  const isNextDisabled = !name.trim();
+  const [name, setName] = useState('');
+  const [avatar, setAvatar] = useState<string | null>(null);
+
+  const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
+
+  const isNextDisabled = !name.trim() && !avatar;
+
+  const handlePickAvatar = async () => {
+    try {
+      const result = await ImagePicker.launchImageLibraryAsync({
+        base64: false,
+        aspect: [1, 1],
+        allowsEditing: true,
+        quality: 0.7,
+      });
+
+      if (result.canceled) return;
+
+      let uri = result.assets[0].uri;
+
+      const fileInfo = await fetch(uri);
+      const blob = await fileInfo.blob();
+      const sizeMB = blob.size / (1024 * 1024);
+
+      if (sizeMB > 5) {
+        Alert.alert('Error', 'The image is too large. Max size: 5 MB');
+        return;
+      }
+
+      setUploading(true);
+
+      const manipulated = await ImageManipulator.manipulateAsync(
+        uri,
+        [{ resize: { width: 500, height: 500 } }],
+        { compress: 0.8, format: ImageManipulator.SaveFormat.JPEG }
+      );
+
+      setAvatar(manipulated.uri);
+      setUploading(false);
+    } catch (err) {
+      console.log('Pick error:', err);
+      setUploading(false);
+    }
+  };
+
+  const handleSave = async () => {
+    try {
+      setSaving(true);
+
+      if (avatar) {
+  const formData = new FormData();
+
+  const file: {
+    uri: string;
+    name: string;
+    type: string;
+  } = {
+    uri: avatar,
+    name: 'avatar.jpg',
+    type: 'image/jpeg',
+  };
+
+  formData.append('avatar', file as any);
+
+  await updateProfile(formData);
+
+      } else {
+        await updateProfile({ name: name.trim() || null });
+      }
+
+      setSaving(false);
+      navigation.reset({ index: 0, routes: [{ name: 'Home' }] });
+    } catch (e: any) {
+      console.log('Update error:', e.message);
+      setSaving(false);
+    }
+  };
+
+  const handleSkip = () => {
+    navigation.reset({ index: 0, routes: [{ name: 'Home' }] });
+  };
 
   const handleLogout = async () => {
     await logout();
-
-    navigation.reset({
-      index: 0,
-      routes: [{ name: 'Login' }],
-    });
+    navigation.reset({ index: 0, routes: [{ name: 'Login' }] });
   };
 
   return (
     <KeyboardAwareScrollView
       contentContainerStyle={styles.container}
       enableOnAndroid={true}
-      extraScrollHeight={40}
-      keyboardShouldPersistTaps="handled"
     >
       <View style={styles.header}>
         <View style={styles.headerRow}>
-          <TouchableOpacity style={styles.loginButton} onPress={handleLogout}>
-            <Text style={styles.loginButtonText}>Logout</Text>
+          <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+            <Text style={styles.logoutText}>Logout</Text>
           </TouchableOpacity>
 
           <View style={styles.headerRight}>
-            <Text style={styles.title}>Register</Text>
+            <Text style={styles.title}>Profile</Text>
           </View>
         </View>
 
         <View style={styles.avatarWrapper}>
           <View style={styles.avatarCircle}>
-            <Image source={user} style={styles.avatarIcon} />
+            {uploading ? (
+              <ActivityIndicator size="large" color="#666" />
+            ) : (
+              <Image
+                source={avatar ? { uri: avatar } : userIcon}
+                style={styles.avatarIcon}
+              />
+            )}
           </View>
 
-          <View style={styles.editIconWrapper}>
-            <Image source={pencil} style={styles.editIcon} />
-          </View>
+          <TouchableOpacity
+            style={styles.editIconWrapper}
+            onPress={handlePickAvatar}
+          >
+            <Image source={pencilIcon} style={styles.editIcon} />
+          </TouchableOpacity>
+
+          {!avatar && (
+            <Text style={styles.avatarHint}>Upload your avatar</Text>
+          )}
         </View>
       </View>
 
-      <View style={styles.headerSpacer} />
-
       <View style={styles.inputRow}>
-        <Image source={user} style={styles.inputLeftIcon} />
+        <Image source={userIcon} style={styles.inputLeftIcon} />
 
         <TextInput
-          placeholder="Your Name"
-          placeholderTextColor="#999"
+          placeholder="Enter your name"
           style={styles.input}
           value={name}
           onChangeText={setName}
         />
       </View>
 
-      <View style={styles.rowButtons}>
-        <TouchableOpacity style={styles.skipButton}>
+      <View style={styles.buttonsRow}>
+        <TouchableOpacity style={styles.skipButton} onPress={handleSkip}>
           <Text style={styles.skipButtonText}>Skip</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
-          style={[styles.button, isNextDisabled && styles.disabled]}
-          disabled={isNextDisabled}
+          style={[styles.nextButton, isNextDisabled && styles.disabled]}
+          disabled={isNextDisabled || saving}
+          onPress={handleSave}
         >
-          <Text style={styles.buttonIcon}>→</Text>
+          {saving ? (
+            <ActivityIndicator size="small" color="white" />
+          ) : (
+            <Text style={styles.nextButtonIcon}>→</Text>
+          )}
         </TouchableOpacity>
       </View>
     </KeyboardAwareScrollView>

@@ -150,4 +150,39 @@ export const styles = StyleSheet.create({
     fontSize: 30,
     color: COLORS.white,
   },
+
+  avatarHint: {
+    marginTop: 8,
+    color: '#eeeeee',
+    fontSize: 14,
+  },
+
+  logoutButton: {
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+  },
+  logoutText: {
+    color: COLORS.red,
+    fontSize: 15,
+  },
+
+  buttonsRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 40,
+  },
+
+  nextButton: {
+    width: 55,
+    height: 55,
+    backgroundColor: COLORS.primary,
+    borderRadius: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  nextButtonIcon: {
+    fontSize: 26,
+    color: COLORS.white,
+  },
 });

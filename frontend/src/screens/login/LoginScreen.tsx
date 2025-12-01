@@ -66,7 +66,7 @@ const LoginScreen = () => {
 
       navigation.reset({
         index: 0,
-        routes: [{ name: 'Profile' }],
+        routes: [{ name: 'Home' }],
       });
     } catch (e: any) {
       Alert.alert('Login error', e.message);
