@@ -158,12 +158,15 @@ export const styles = StyleSheet.create({
   },
 
   logoutButton: {
-    paddingHorizontal: 10,
-    paddingVertical: 6,
+    backgroundColor: COLORS.white,
+    paddingVertical: 8,
+    paddingHorizontal: 15,
+    borderRadius: SIZES.radiusM,
   },
   logoutText: {
-    color: COLORS.red,
-    fontSize: 15,
+    color: COLORS.primary,
+    fontSize: FONTS.text,
+    fontWeight: '600',
   },
 
   buttonsRow: {

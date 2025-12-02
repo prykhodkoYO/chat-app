@@ -6,37 +6,50 @@ import { JwtService } from '@nestjs/jwt';
 import { RegisterDto } from './dto/register.dto';
 import { User } from '../user/user.entity';
 import { LoginDto } from './dto/login.dto';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
   constructor(
     @InjectRepository(User) private usersRepo: Repository<User>,
     private jwtService: JwtService,
+    private cfg: ConfigService,
   ) {}
 
-  async login(dto: LoginDto) {
-    const user = await this.usersRepo.findOne({
-      where: { phone: dto.phone },
+  private async generateTokens(user: User) {
+    const payload = { id: user.id, phone: user.phone };
+
+    const accessToken = await this.jwtService.signAsync(payload, {
+      secret: this.cfg.get('ACCESS_TOKEN_SECRET'),
+      expiresIn: '15m',
     });
 
-    if (!user) {
-      throw new UnauthorizedException('Invalid phone or password');
-    }
+    const refreshToken = await this.jwtService.signAsync(payload, {
+      secret: this.cfg.get('REFRESH_TOKEN_SECRET'),
+      expiresIn: '30d',
+    });
+
+    return { accessToken, refreshToken };
+  }
+
+  private async saveRefreshToken(userId: string, token: string) {
+    const hash = await bcrypt.hash(token, 10);
+    await this.usersRepo.update(userId, { refreshToken: hash });
+  }
+
+  async login(dto: LoginDto) {
+    const user = await this.usersRepo.findOne({ where: { phone: dto.phone } });
+    if (!user) throw new UnauthorizedException('Invalid phone or password');
 
     const isMatch = await bcrypt.compare(dto.password, user.password);
+    if (!isMatch) throw new UnauthorizedException('Invalid phone or password');
 
-    if (!isMatch) {
-      throw new UnauthorizedException('Invalid phone or password');
-    }
-
-    const token = await this.jwtService.signAsync(
-      { id: user.id, phone: user.phone },
-      { expiresIn: '1d' },
-    );
+    const tokens = await this.generateTokens(user);
+    await this.saveRefreshToken(user.id, tokens.refreshToken);
 
     return {
       message: 'Login successful',
-      token,
+      ...tokens,
       user: {
         id: user.id,
         phone: user.phone,
@@ -64,19 +77,49 @@ export class AuthService {
 
     await this.usersRepo.save(user);
 
-    const token = await this.jwtService.signAsync(
-      { id: user.id, phone: user.phone },
-      { expiresIn: '1d' },
-    );
+    const tokens = await this.generateTokens(user);
+    await this.saveRefreshToken(user.id, tokens.refreshToken);
 
     return {
       message: 'User registered successfully',
-      token,
+      ...tokens,
       user: {
         id: user.id,
         phone: user.phone,
         name: user.name,
       },
     };
+  }
+
+  async refresh(refreshToken: string) {
+    if (!refreshToken) throw new UnauthorizedException('Missing refresh token');
+
+    let payload;
+    try {
+      payload = await this.jwtService.verifyAsync(refreshToken, {
+        secret: this.cfg.get('REFRESH_TOKEN_SECRET'),
+      });
+    } catch {
+      throw new UnauthorizedException('Invalid refresh token');
+    }
+
+    const user = await this.usersRepo.findOne({
+      where: { id: payload.id },
+    });
+
+    if (!user || !user.refreshToken) throw new UnauthorizedException('Invalid refresh token');
+
+    const isMatch = await bcrypt.compare(refreshToken, user.refreshToken);
+    if (!isMatch) throw new UnauthorizedException('Invalid refresh token');
+
+    const tokens = await this.generateTokens(user);
+    await this.saveRefreshToken(user.id, tokens.refreshToken);
+
+    return tokens;
+  }
+
+  async logout(userId: string) {
+    await this.usersRepo.update(userId, { refreshToken: null });
+    return { message: 'Logged out' };
   }
 }

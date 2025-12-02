@@ -11,7 +11,7 @@ import { registerUser } from '../../api/auth';
 import { Country } from '../../data/countries';
 import { COLORS } from '../../constants/style';
 import { ActivityIndicator } from 'react-native';
-import { saveToken } from '../../api/tokenStorage';
+import { saveAccessToken, saveRefreshToken } from '../../api/tokenStorage';
 import { RootStackNavigation } from '../../types/navigation.types';
 
 const MIN_PASSWORD_LENGTH = 6;
@@ -91,7 +91,8 @@ const RegisterScreen = () => {
         password,
       });
 
-      await saveToken(res.token);
+      await saveAccessToken(res.accessToken);
+      await saveRefreshToken(res.refreshToken);
 
       navigation.reset({
         index: 0,

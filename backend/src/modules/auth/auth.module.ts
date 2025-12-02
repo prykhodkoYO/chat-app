@@ -16,10 +16,10 @@ import { ConfigModule,ConfigService } from '@nestjs/config';
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (cfg: ConfigService) => {
-        const secret = cfg.get<string>('MY_JWT_SECRET');
+        const secret = cfg.get<string>('ACCESS_TOKEN_SECRET');
         return {
           secret,
-          signOptions: { expiresIn: '1d' },
+          signOptions: { expiresIn: '15m' },
         };
       },
     }),
