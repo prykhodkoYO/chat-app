@@ -5,13 +5,15 @@ import {
   Req,
   UseGuards,
   UseInterceptors,
-  UploadedFile
+  UploadedFile,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 import { UserService } from './user.service';
 import { UpdateProfileDto } from './dto/update-profile.dto';
+import { multerAvatarOptions } from './upload.middleware';
 
 @Controller('user')
 export class UserController {
@@ -22,20 +24,20 @@ export class UserController {
 
   @UseGuards(JwtAuthGuard)
   @Patch('profile')
-  @UseInterceptors(FileInterceptor('avatar'))
+  @UseInterceptors(FileInterceptor('avatar', multerAvatarOptions))
   async updateProfile(
     @Req() req,
     @UploadedFile() file: Express.Multer.File,
     @Body() dto: UpdateProfileDto,
   ) {
-    let avatarUrl = dto.avatar;
+    let avatarUrl = dto.avatar ?? null;
 
     if (file) {
       avatarUrl = await this.cloudinary.uploadImage(file);
     }
 
     return this.userService.updateProfile(req.user.id, {
-      ...dto,
+      name: dto.name ?? null,
       avatar: avatarUrl,
     });
   }

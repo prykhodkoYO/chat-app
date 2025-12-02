@@ -11,9 +11,19 @@ export interface LoginData {
   password: string;
 }
 
-export async function registerUser(data: RegisterData) {
+export interface AuthResponse {
+  accessToken: string;
+  refreshToken: string;
+  user: {
+    id: string;
+    phone: string;
+    name: string | null;
+  };
+}
+
+export async function registerUser(data: RegisterData): Promise<AuthResponse> {
   try {
-    const res = await api.post('/auth/register', data);
+    const res = await api.post<AuthResponse>('/auth/register', data);
 
     await saveAccessToken(res.data.accessToken);
     await saveRefreshToken(res.data.refreshToken);
@@ -25,9 +35,9 @@ export async function registerUser(data: RegisterData) {
   }
 }
 
-export async function loginUser(data: LoginData) {
+export async function loginUser(data: LoginData): Promise<AuthResponse> {
   try {
-    const res = await api.post('/auth/login', data);
+    const res = await api.post<AuthResponse>('/auth/login', data);
 
     await saveAccessToken(res.data.accessToken);
     await saveRefreshToken(res.data.refreshToken);

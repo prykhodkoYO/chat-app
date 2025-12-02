@@ -10,6 +10,7 @@ export class UserService {
     @InjectRepository(User)
     private readonly userRepo: Repository<User>,
   ) {}
+
   async updateProfile(userId: string, dto: UpdateProfileDto) {
     const user = await this.userRepo.findOne({ where: { id: userId } });
 
@@ -17,8 +18,13 @@ export class UserService {
       throw new NotFoundException('User not found');
     }
 
-    if (dto.name !== undefined) user.name = dto.name;
-    if (dto.avatar !== undefined) user.avatar = dto.avatar;
+    if (dto.name !== undefined) {
+      user.name = dto.name && dto.name.trim() !== '' ? dto.name.trim() : null;
+    }
+
+    if (dto.avatar !== undefined) {
+      user.avatar = dto.avatar;
+    }
 
     return this.userRepo.save(user);
   }
