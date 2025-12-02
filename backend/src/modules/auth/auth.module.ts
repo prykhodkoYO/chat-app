@@ -13,6 +13,7 @@ import { ConfigModule,ConfigService } from '@nestjs/config';
     TypeOrmModule.forFeature([User]),
 
     JwtModule.registerAsync({
+      imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (cfg: ConfigService) => {
         const secret = cfg.get<string>('MY_JWT_SECRET');
