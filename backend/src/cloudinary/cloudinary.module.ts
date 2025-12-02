@@ -15,8 +15,6 @@ import { CloudinaryService } from './cloudinary.service';
         const api_key = cfg.get<string>('CLOUDINARY_API_KEY');
         const api_secret = cfg.get<string>('CLOUDINARY_API_SECRET');
 
-        console.log('CLOUDINARY CONFIG:', { cloud_name, api_key, api_secret });
-
         cloudinary.config({
           cloud_name,
           api_key,
