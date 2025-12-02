@@ -1,7 +1,8 @@
 import React from 'react';
 import { View, TextInput, TouchableOpacity, Image, StyleSheet } from 'react-native';
-import eye from '../../assets/eye.png';
-import closedEye from '../../assets/closedEye.png';
+import eye from '../../../assets/eye.png';
+import closedEye from '../../../assets/closedEye.png';
+import { styles } from './PasswordField.styles';
 
 export interface PasswordInputProps {
   value: string;
@@ -11,7 +12,7 @@ export interface PasswordInputProps {
   toggleSecure: () => void;
 }
 
-export default function PasswordInput({
+export default function PasswordField({
   value,
   onChangeText,
   placeholder,
@@ -45,29 +46,3 @@ export default function PasswordInput({
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  wrapper: {
-    width: '85%',
-    marginTop: 25,
-    borderBottomWidth: 2,
-    borderColor: '#007ACC',
-    paddingBottom: 4,
-    position: 'relative',
-  },
-  input: {
-    fontSize: 16,
-    paddingVertical: 8,
-    color: '#000',
-  },
-  eyeButton: {
-    position: 'absolute',
-    right: 5,
-    top: 8,
-    padding: 4,
-  },
-  eyeIcon: {
-    width: 22,
-    height: 22,
-  },
-});

@@ -6,7 +6,7 @@ import Checkbox from 'expo-checkbox';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { COLORS } from '../../constants/style';
 import { ActivityIndicator } from 'react-native';
-import PasswordInput from '../../components/PasswordInput';
+import PasswordField from '../../components/passwordField/PasswordField';
 import PhoneField from '../../components/phoneField/PhoneField';
 import { loginUser } from '../../api/auth';
 import { saveAccessToken, saveRefreshToken } from '../../api/tokenStorage';
@@ -118,7 +118,7 @@ const LoginScreen = () => {
         )}
       />
 
-      <PasswordInput
+      <PasswordField
         value={password}
         onChangeText={(val) => setValue('password', val)}
         placeholder="Password"

@@ -1,13 +1,5 @@
 import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  TextInput,
-  Image,
-  ActivityIndicator,
-  Alert,
-} from 'react-native';
+import { View, Text, TouchableOpacity, Image, ActivityIndicator, Alert } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import * as ImagePicker from 'expo-image-picker';
 import * as ImageManipulator from 'expo-image-manipulator';
@@ -15,6 +7,7 @@ import * as ImageManipulator from 'expo-image-manipulator';
 import userIcon from '../../../assets/user.png';
 import pencilIcon from '../../../assets/pencil.png';
 
+import NameField from '../../components/nameField/NameField';
 import { styles } from './ProfileScreen.styles';
 import { logout } from '../../api/auth';
 import { updateProfile } from '../../api/user';
@@ -59,7 +52,7 @@ export const ProfileScreen = () => {
       const manipulated = await ImageManipulator.manipulateAsync(
         uri,
         [{ resize: { width: 500, height: 500 } }],
-        { compress: 0.8, format: ImageManipulator.SaveFormat.JPEG }
+        { compress: 0.8, format: ImageManipulator.SaveFormat.JPEG },
       );
 
       setAvatar(manipulated.uri);
@@ -75,22 +68,26 @@ export const ProfileScreen = () => {
       setSaving(true);
 
       if (avatar) {
-  const formData = new FormData();
+        const formData = new FormData();
 
-  const file: {
-    uri: string;
-    name: string;
-    type: string;
-  } = {
-    uri: avatar,
-    name: 'avatar.jpg',
-    type: 'image/jpeg',
-  };
+        const trimmedName = name.trim();
+        if (trimmedName) {
+          formData.append('name', trimmedName);
+        }
 
-  formData.append('avatar', file as any);
+        const file: {
+          uri: string;
+          name: string;
+          type: string;
+        } = {
+          uri: avatar,
+          name: 'avatar.jpg',
+          type: 'image/jpeg',
+        };
 
-  await updateProfile(formData);
+        formData.append('avatar', file as any);
 
+        await updateProfile(formData);
       } else {
         await updateProfile({ name: name.trim() || null });
       }
@@ -113,10 +110,7 @@ export const ProfileScreen = () => {
   };
 
   return (
-    <KeyboardAwareScrollView
-      contentContainerStyle={styles.container}
-      enableOnAndroid={true}
-    >
+    <KeyboardAwareScrollView contentContainerStyle={styles.container} enableOnAndroid={true}>
       <View style={styles.header}>
         <View style={styles.headerRow}>
           <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
@@ -135,34 +129,20 @@ export const ProfileScreen = () => {
             ) : (
               <Image
                 source={avatar ? { uri: avatar } : userIcon}
-                style={styles.avatarIcon}
+                style={avatar ? styles.avatarFull : styles.avatarPlaceholder}
               />
             )}
           </View>
 
-          <TouchableOpacity
-            style={styles.editIconWrapper}
-            onPress={handlePickAvatar}
-          >
+          <TouchableOpacity style={styles.editIconWrapper} onPress={handlePickAvatar}>
             <Image source={pencilIcon} style={styles.editIcon} />
           </TouchableOpacity>
 
-          {!avatar && (
-            <Text style={styles.avatarHint}>Upload your avatar</Text>
-          )}
+          {!avatar && <Text style={styles.avatarHint}>Upload your avatar</Text>}
         </View>
       </View>
 
-      <View style={styles.inputRow}>
-        <Image source={userIcon} style={styles.inputLeftIcon} />
-
-        <TextInput
-          placeholder="Enter your name"
-          style={styles.input}
-          value={name}
-          onChangeText={setName}
-        />
-      </View>
+      <NameField value={name} onChangeText={setName} />
 
       <View style={styles.buttonsRow}>
         <TouchableOpacity style={styles.skipButton} onPress={handleSkip}>

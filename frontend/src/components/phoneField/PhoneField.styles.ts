@@ -22,12 +22,12 @@ export const styles = StyleSheet.create({
   },
   code: {
     fontSize: 18,
-    color: '#000',
+    color: COLORS.black,
   },
   input: {
     flex: 1,
     fontSize: 18,
-    color: '#000',
+    color: COLORS.black,
     paddingVertical: 6,
   },
 });

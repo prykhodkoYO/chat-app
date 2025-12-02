@@ -2,9 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, Alert } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { useForm, Controller } from 'react-hook-form';
-import Checkbox from 'expo-checkbox';
 import { useNavigation } from '@react-navigation/native';
-import PasswordInput from '../../components/PasswordInput';
+import PasswordField from '../../components/passwordField/PasswordField';
 import PhoneField from '../../components/phoneField/PhoneField';
 import { styles } from './RegisterScreen.styles';
 import { registerUser } from '../../api/auth';
@@ -142,7 +141,7 @@ const RegisterScreen = () => {
         )}
       />
 
-      <PasswordInput
+      <PasswordField
         value={password}
         onChangeText={(val) => setValue('password', val)}
         placeholder={`Password (min ${MIN_PASSWORD_LENGTH} symbols)`}
@@ -156,7 +155,7 @@ const RegisterScreen = () => {
         </Text>
       )}
 
-      <PasswordInput
+      <PasswordField
         value={confirmPassword}
         onChangeText={(val) => setValue('confirmPassword', val)}
         placeholder={`Confirm Password (min ${MIN_PASSWORD_LENGTH} symbols)`}
@@ -169,17 +168,6 @@ const RegisterScreen = () => {
       )}
 
       <View style={styles.row}>
-        <View style={styles.checkRow}>
-          <Controller
-            control={control}
-            name="remember"
-            render={({ field: { onChange, value } }) => (
-              <Checkbox value={value} onValueChange={onChange} color={COLORS.accentBlue} />
-            )}
-          />
-          <Text style={styles.checkLabel}>Remember me</Text>
-        </View>
-
         <TouchableOpacity
           style={[styles.button, (isButtonDisabled || isLoading) && styles.disabled]}
           disabled={isButtonDisabled || isLoading}

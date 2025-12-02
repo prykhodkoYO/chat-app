@@ -1,6 +1,6 @@
 import React from 'react';
 import { Modal, View, Text, TouchableOpacity, FlatList, StyleSheet } from 'react-native';
-import { countries, Country } from '../data/countries';
+import { countries, Country } from '../../data/countries';
 
 interface Props {
   visible: boolean;
