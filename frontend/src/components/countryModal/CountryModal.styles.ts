@@ -1,7 +1,6 @@
 import { StyleSheet } from 'react-native';
 import { COLORS } from '../../constants/style';
 
-
 export const styles = StyleSheet.create({
   overlay: {
     flex: 1,

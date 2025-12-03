@@ -16,7 +16,7 @@ export default function NameField({ value, onChangeText, placeholder }: Props) {
 
       <TextInput
         style={styles.input}
-        placeholder={placeholder || "Enter your name"}
+        placeholder={placeholder || 'Enter your name'}
         value={value}
         onChangeText={onChangeText}
         placeholderTextColor="#888"
