@@ -61,7 +61,7 @@ export const styles = StyleSheet.create({
   row: {
     width: SIZES.inputWidth,
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-end',
     alignItems: 'center',
     marginTop: 35,
   },

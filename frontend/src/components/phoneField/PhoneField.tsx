@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, TextInput, TouchableOpacity, Text, StyleSheet } from 'react-native';
 import { countries, Country } from '../../data/countries';
-import CountryModal from '../CountryModal';
+import CountryModal from '../countryModal/CountryModal';
 import { styles } from './PhoneField.styles';
 
 interface Props {

@@ -1,20 +1,49 @@
 import React, { useEffect } from 'react';
 import { View, ActivityIndicator } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useNavigation } from '@react-navigation/native';
+import { RootStackNavigation } from '../../types/navigation.types';
+import { getAccessToken, getRefreshToken, saveAccessToken } from '../../api/tokenStorage';
+import { api } from '../../api/axiosInstance';
 import { styles } from './AuthLoading.styles';
 import { COLORS } from '../../constants/style';
 
-export default function AuthLoading({ navigation }: any) {
-  useEffect(() => {
-    const checkToken = async () => {
-      const token = await AsyncStorage.getItem('token');
+export default function AuthLoading() {
+  const navigation = useNavigation<RootStackNavigation>();
 
-      if (token) {
+  useEffect(() => {
+    const checkTokens = async () => {
+      const access = await getAccessToken();
+
+      if (access) {
         navigation.reset({
           index: 0,
-          routes: [{ name: 'Profile' }],
+          routes: [{ name: 'Home' }],
         });
-      } else {
+        return;
+      }
+
+      const refresh = await getRefreshToken();
+
+      if (!refresh) {
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'Login' }],
+        });
+        return;
+      }
+
+      try {
+        const res = await api.post('/auth/refresh', { refreshToken: refresh });
+
+        await saveAccessToken(res.data.accessToken);
+
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'Home' }],
+        });
+      } catch (err) {
+        console.log('Refresh failed:', err);
+
         navigation.reset({
           index: 0,
           routes: [{ name: 'Login' }],
@@ -22,7 +51,7 @@ export default function AuthLoading({ navigation }: any) {
       }
     };
 
-    checkToken();
+    checkTokens();
   }, []);
 
   return (

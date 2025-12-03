@@ -6,10 +6,10 @@ import Checkbox from 'expo-checkbox';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { COLORS } from '../../constants/style';
 import { ActivityIndicator } from 'react-native';
-import PasswordInput from '../../components/PasswordInput';
+import PasswordField from '../../components/passwordField/PasswordField';
 import PhoneField from '../../components/phoneField/PhoneField';
 import { loginUser } from '../../api/auth';
-import { saveToken } from '../../api/tokenStorage';
+import { saveAccessToken, saveRefreshToken } from '../../api/tokenStorage';
 import { styles } from './LoginScreen.styles';
 import { Country } from '../../data/countries';
 import { RootStackNavigation } from '../../types/navigation.types';
@@ -61,12 +61,15 @@ const LoginScreen = () => {
       });
 
       if (remember) {
-        await saveToken(res.token);
+        await saveAccessToken(res.accessToken);
+        await saveRefreshToken(res.refreshToken);
+      } else {
+        await saveAccessToken(res.accessToken);
       }
 
       navigation.reset({
         index: 0,
-        routes: [{ name: 'Profile' }],
+        routes: [{ name: 'Home' }],
       });
     } catch (e: any) {
       Alert.alert('Login error', e.message);
@@ -115,7 +118,7 @@ const LoginScreen = () => {
         )}
       />
 
-      <PasswordInput
+      <PasswordField
         value={password}
         onChangeText={(val) => setValue('password', val)}
         placeholder="Password"

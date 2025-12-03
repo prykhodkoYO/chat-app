@@ -22,19 +22,6 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
   },
 
-  loginButton: {
-    backgroundColor: COLORS.white,
-    paddingVertical: 8,
-    paddingHorizontal: 15,
-    borderRadius: SIZES.radiusM,
-  },
-
-  loginButtonText: {
-    color: COLORS.primary,
-    fontSize: FONTS.text,
-    fontWeight: '600',
-  },
-
   headerRight: {
     paddingRight: 10,
   },
@@ -49,6 +36,7 @@ export const styles = StyleSheet.create({
     marginTop: 25,
     alignItems: 'center',
     justifyContent: 'center',
+    position: 'relative',
   },
 
   avatarCircle: {
@@ -58,12 +46,13 @@ export const styles = StyleSheet.create({
     backgroundColor: COLORS.avatarBlue,
     justifyContent: 'center',
     alignItems: 'center',
+    overflow: 'hidden',
   },
 
   avatarIcon: {
-    width: 50,
-    height: 50,
-    resizeMode: 'contain',
+    width: '100%',
+    height: '100%',
+    resizeMode: 'cover',
   },
 
   editIconWrapper: {
@@ -125,6 +114,10 @@ export const styles = StyleSheet.create({
     paddingVertical: 8,
     paddingHorizontal: 20,
     borderRadius: SIZES.radiusM,
+    borderWidth: 2,
+    borderColor: COLORS.primary,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 
   skipButtonText: {
@@ -149,5 +142,60 @@ export const styles = StyleSheet.create({
   buttonIcon: {
     fontSize: 30,
     color: COLORS.white,
+  },
+
+  avatarHint: {
+    fontSize: FONTS.subtitle,
+    marginTop: 8,
+    color: COLORS.grayLight,
+    alignSelf: 'center',
+    position: 'relative',
+    top: 14,
+  },
+
+  logoutButton: {
+    backgroundColor: COLORS.white,
+    paddingVertical: 8,
+    paddingHorizontal: 15,
+    borderRadius: SIZES.radiusM,
+  },
+  logoutText: {
+    color: COLORS.primary,
+    fontSize: FONTS.text,
+    fontWeight: '600',
+  },
+
+  buttonsRow: {
+    width: '100%',
+    paddingHorizontal: 30,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 40,
+  },
+
+  nextButton: {
+    width: 55,
+    height: 55,
+    backgroundColor: COLORS.primary,
+    borderRadius: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  nextButtonIcon: {
+    fontSize: 26,
+    color: COLORS.white,
+  },
+
+  avatarPlaceholder: {
+    width: 50,
+    height: 50,
+    resizeMode: 'contain',
+  },
+
+  avatarFull: {
+    width: '100%',
+    height: '100%',
+    resizeMode: 'cover',
   },
 });

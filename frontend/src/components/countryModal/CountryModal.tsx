@@ -1,6 +1,7 @@
 import React from 'react';
 import { Modal, View, Text, TouchableOpacity, FlatList, StyleSheet } from 'react-native';
-import { countries, Country } from '../data/countries';
+import { countries, Country } from '../../data/countries';
+import { styles } from './CountryModal.styles';
 
 interface Props {
   visible: boolean;
@@ -42,44 +43,3 @@ export default function CountryModal({ visible, onClose, onSelect }: Props) {
     </Modal>
   );
 }
-
-const styles = StyleSheet.create({
-  overlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.4)',
-    justifyContent: 'center',
-    padding: 20,
-  },
-  modal: {
-    backgroundColor: '#fff',
-    borderRadius: 10,
-    padding: 20,
-    maxHeight: '80%',
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: '600',
-    marginBottom: 15,
-  },
-  item: {
-    flexDirection: 'row',
-    paddingVertical: 10,
-    alignItems: 'center',
-  },
-  flag: {
-    fontSize: 28,
-    marginRight: 10,
-  },
-  name: {
-    fontSize: 18,
-  },
-  closeBtn: {
-    marginTop: 15,
-    padding: 10,
-  },
-  closeText: {
-    fontSize: 18,
-    color: '#007AFF',
-    textAlign: 'center',
-  },
-});
