@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, { AxiosError, AxiosResponse } from 'axios';
 import Constants from 'expo-constants';
 
 import {
@@ -34,8 +34,10 @@ api.interceptors.request.use(async (config) => {
 
 api.interceptors.response.use(
   (res) => res,
-  async (error) => {
-    const original = error.config;
+  async (e) => {
+    const error = e as AxiosError;
+
+    const original = error.config as any;
 
     if (error.response?.status === 401 && !original._retry) {
       original._retry = true;
@@ -47,6 +49,7 @@ api.interceptors.response.use(
       }
 
       isRefreshing = true;
+
       try {
         const refresh = await getRefreshToken();
         if (!refresh) {
@@ -54,7 +57,10 @@ api.interceptors.response.use(
           return Promise.reject(error);
         }
 
-        const res = await api.post('/auth/refresh', { refreshToken: refresh });
+        const res: AxiosResponse<{ accessToken: string; refreshToken: string }> = await api.post(
+          '/auth/refresh',
+          { refreshToken: refresh },
+        );
 
         await saveAccessToken(res.data.accessToken);
         await saveRefreshToken(res.data.refreshToken);
@@ -65,10 +71,13 @@ api.interceptors.response.use(
         original.headers.Authorization = `Bearer ${res.data.accessToken}`;
         return api(original);
       } catch (err) {
+        const refreshError = err as AxiosError;
+
         isRefreshing = false;
         processQueue(null);
         await removeTokens();
-        return Promise.reject(err);
+
+        return Promise.reject(refreshError);
       }
     }
 

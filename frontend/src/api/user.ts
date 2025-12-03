@@ -1,4 +1,5 @@
 import { api } from './axiosInstance';
+import { AxiosError } from 'axios';
 
 export interface UpdateProfileData {
   name?: string | null;
@@ -16,8 +17,11 @@ export async function updateProfile(data: FormData | UpdateProfileData) {
     });
 
     return response.data;
-  } catch (error: any) {
+  } catch (e) {
+    const error = e as AxiosError<{ message?: string }>;
+
     console.log('Update error:', error.response?.data || error.message);
+
     throw new Error(error.response?.data?.message || 'Update failed');
   }
 }

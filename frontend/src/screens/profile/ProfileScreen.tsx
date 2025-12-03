@@ -14,6 +14,8 @@ import { updateProfile } from '../../api/user';
 import { RootStackNavigation } from '../../types/navigation.types';
 import { useNavigation } from '@react-navigation/native';
 
+const MAX_AVATAR_SIZE_MB = 5;
+
 export const ProfileScreen = () => {
   const navigation = useNavigation<RootStackNavigation>();
 
@@ -42,8 +44,8 @@ export const ProfileScreen = () => {
       const blob = await fileInfo.blob();
       const sizeMB = blob.size / (1024 * 1024);
 
-      if (sizeMB > 5) {
-        Alert.alert('Error', 'The image is too large. Max size: 5 MB');
+      if (sizeMB > MAX_AVATAR_SIZE_MB) {
+        Alert.alert('Error', `The image is too large. Max size: ${MAX_AVATAR_SIZE_MB} MB`);
         return;
       }
 
