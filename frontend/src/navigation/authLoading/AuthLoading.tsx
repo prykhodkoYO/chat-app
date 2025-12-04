@@ -17,7 +17,7 @@ export default function AuthLoading() {
       if (access) {
         navigation.reset({
           index: 0,
-          routes: [{ name: 'Home' }],
+          routes: [{ name: 'Chats' }],
         });
         return;
       }
@@ -39,7 +39,7 @@ export default function AuthLoading() {
 
         navigation.reset({
           index: 0,
-          routes: [{ name: 'Home' }],
+          routes: [{ name: 'Chats' }],
         });
       } catch (err) {
         console.log('Refresh failed:', err);

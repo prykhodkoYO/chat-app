@@ -69,7 +69,7 @@ const LoginScreen = () => {
 
       navigation.reset({
         index: 0,
-        routes: [{ name: 'Home' }],
+        routes: [{ name: 'Chats' }],
       });
     } catch (e: any) {
       Alert.alert('Login error', e.message);

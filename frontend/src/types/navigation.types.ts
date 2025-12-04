@@ -5,7 +5,7 @@ export type RootStackParamList = {
   Login: undefined;
   Registration: undefined;
   Profile: undefined;
-  Home: undefined;
+  Chats: undefined;
 };
 
 export type RootStackNavigation = NavigationProp<RootStackParamList>;
