@@ -95,7 +95,7 @@ export const ProfileScreen = () => {
       }
 
       setSaving(false);
-      navigation.reset({ index: 0, routes: [{ name: 'Home' }] });
+      navigation.reset({ index: 0, routes: [{ name: 'Chats' }] });
     } catch (e: any) {
       console.log('Update error:', e.message);
       setSaving(false);
@@ -103,7 +103,7 @@ export const ProfileScreen = () => {
   };
 
   const handleSkip = () => {
-    navigation.reset({ index: 0, routes: [{ name: 'Home' }] });
+    navigation.reset({ index: 0, routes: [{ name: 'Chats' }] });
   };
 
   const handleLogout = async () => {
