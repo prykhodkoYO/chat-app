@@ -105,11 +105,6 @@ export const styles = StyleSheet.create({
     height: 35,
   },
 
-  tabIconActive: {
-    fontSize: 20,
-    color: '#0B75E0',
-  },
-
   tabText: {
     fontSize: 12,
     color: COLORS.black,
